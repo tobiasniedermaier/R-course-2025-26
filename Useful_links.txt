@@ -1,0 +1,37 @@
+Some useful links for new R programmers:
+
+Download and install R from here:
+https://www.r-project.org/
+
+Download and install an IDE (integrated development enviroment), either RStudio:
+https://posit.co/download/rstudio-desktop/
+
+or RKWard:
+https://rkward.kde.org/
+
+or simply use a code editor like Notepad++:
+https://notepad-plus-plus.org/
+
+or any other code editor with syntax highlighting
+
+or (new!) go to:
+https://ide.flexpilot.ai
+This is a modern IDE with AI/LLM integration using GPT-4o.
+
+R is a highly modular statistical programming language. That means it can be extended by packages, which are basically a set of custom functions along with function descriptions and (sometimes) data sets and usage examples (vignettes).
+
+For an overview of R packages sorted by topic, see:
+https://cran.r-project.org/web/views/
+
+For a list of all R packages ever published, with a very short (one sentence) description, see:
+https://cran.r-project.org/web/packages/available_packages_by_date.html
+
+For one of the countless introductions into R, see (for example):
+https://bookdown.org/rdpeng/rprogdatascience/
+
+For questions, you can ask me, of course. Or use one of the following links to LLMs:
+https://chatgpt.com/ (nothing new, unless you lived in a cage for the past years)
+https://chat.mistral.ai/chat (French LLM)
+https://copilot.microsoft.com/ (Microsoft Copilot)
+https://toolbaz.com/writer/chat-gpt-alternative (many different LLMs, but "one-shot" only, no real conversations)
+https://huggingface.co/ (search for Qwen Coder. Available in different sizes. The newer ones (like Qwen3 Coder 30B-A3B) are very "heavy" (require at least 16 GB RAM and a fast CPU). The older model (Qwen2.5 Coder) is available in various sizes, from 1.5 over 7 to 14 billion parameters. Start with the smallest one and try if larger ones also work reasonably fast on your computer. Use a "moderately quantized" version like Q4_K_M.
