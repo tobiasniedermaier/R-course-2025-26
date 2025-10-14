@@ -1,0 +1,9 @@
+"","color","price","is_electric"
+"1","blue",10000,FALSE
+"2","red",20000,FALSE
+"3","blue",9000,FALSE
+"4","red",50000,TRUE
+"5","green",400,FALSE
+"6","black",15000,TRUE
+"7","green",160000,FALSE
+"8","white",600,TRUE
