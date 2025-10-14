@@ -28,6 +28,7 @@ https://cran.r-project.org/web/packages/available_packages_by_date.html
 
 For one of the countless introductions into R, see (for example):
 https://bookdown.org/rdpeng/rprogdatascience/
+Ask me if you need further (freely available) R introductions/tutorials.
 
 For questions, you can ask me, of course. Or use one of the following links to LLMs:
 https://chatgpt.com/ (nothing new, unless you lived in a cage for the past years)
