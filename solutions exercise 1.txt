@@ -1,0 +1,126 @@
+rm(list=ls(all=TRUE))
+
+# Exercise 1:
+
+## Task 1
+
+#1. Assign the number 2 to an object a.
+a <- 2 #This is the most common assignment method. Alternatively:
+a = 2 #Or:
+2 -> a
+
+#2. Take the natural logarithm of a.
+log(a) #As you can see if you type ?log, the log function will calculate the natural logarithm (base = e = 2.71...) by default. But you can also specify another base. Try for example: log(1000, base=10)
+
+#3. Assign a new object using sin <- a.
+sin <- a
+
+#4. What will be the output of sin(sin)? Try to predict the output before executing the code!
+sin(sin) #Note that it is NOT recommended to assign a value to a variable with the same name as an existing function, even though it technically works.
+
+#Just for fun:
+sin(1)^2 + cos(1)^2 #Or: sin(1)**2 + cos(1)**2
+#This is the "Pythagorean trigonometric identity".
+
+#5. Assign a new variable b with the value TRUE.
+b <- TRUE
+
+#6. What will be the result of 1 + b? Why?
+1 + b
+
+#7. What will be the result of sqrt(b)?
+sqrt(b)
+
+#8. What is the value of b+b?
+b + b
+
+#9. Assign a new variable c with the value '1'.
+c <- 1
+
+#10. What will be the result of 1 + c? Why?
+1 + c
+
+#But:
+c <- "1"
+1 + c
+1 + (as.numeric(c))
+c <- as.numeric(c)
+1 + c
+
+## Task 2
+
+#1. Assign a new object v that is a vector with the elements c(2, 4, 5, 6, 4, -1).
+v <- c(2, 4, 5, 6, 4, -1) #or easier:
+-v
+
+#2. Add 1 to each element of the vector?
+v + 1 #recycling rule! The shorter vector (here: 1) is reused ("recycled") until it matches the length of the longer vector it is added to. This only works if the longer vector is a (whole-number) multiple of the shorter vector.
+
+#3. Swap the sign of the vector.
+v*(-1) #Or easier:
+-v
+
+#4. Get the second element of the vector.
+v[2]
+
+#5. Get all elements of the vector except the last one.
+v[-6] #Works here, but it is not recommended because it won't work anymore if the vector becomes longer or shorter by adding or removing elements. Better:
+v[-length(v)] #or:
+v[1:(length(v)-1)] #Read: From the vector v, take all elements starting from the first one, until one before the last element. length(v) gives the length of the vector (here: 6), so it would take the entire vector from 1 to 6. length(v)-1 gives a vector in which the last element of v is removed.
+
+#6. How many values of 4 does the vector contain?
+length(v[v==4]) #or:
+sum(v==4) #v==4 returns a logical vector with TRUE if the element is 4 and FALSE otherwise. Since TRUE is coded 1 and FALSE is coded 0, we can simply use the sum() function to count the number of elements for which the condition (v==4) is TRUE.
+
+#7. Swap the sign of all negative values.
+abs(v) #or:
+v[v < 0] <- -v[v < 0]
+
+## Task 3
+
+#1. Define a vector f1 containing 5 arbitrary elements of the type character.
+f1 <- sample(LETTERS, size=5) #short for: sample(x=LETTERS, size=5, replace=FALSE)
+#LETTERS returns a vector with the capital letters of the alphabet. (letters returns a vector with the small latters of the alphabet.) sample(x, size) takes a sample of n=size (here: 5) values from the vector x (here: LETTERS).
+#LETTERS and size are function arguments (of the function sample()). An argument is "something you put into a function." Some arguments are mandatory like the element(s) to select the sample from in the sample() function. Other arguments are optional, like the size and the replace argument. It means that the function also returns something if you don't specify something for them, like here size=5.
+#Note that sample() has the default argument replace=FALSE. It means that it will select the specified number of elements from the vector, but without repeating them. Sometimes you will want to use replace=TRUE so that values can be drawn repeatedly (random draw with replacement.) This is needed for example for bootstrapping.
+
+#2. Define a vector f2 containing 5 arbitrary elements of the type factor.
+f2 <- factor(sample(LETTERS, 5)) #A factor is something like a nominal variable. It can be useful if you have a variable with "a handful" of possible values which cannot be ordered, like "favorite color" of study participants.
+
+#3. Define a vector f3 containing 5 other arbitrary elements of the type numeric.
+f3 <- c(4, 9, 8.6, 7, -6.25)
+
+#4. Create a list L containing the vectors f1, f2, f3.
+mylist <- list(f1, f2, f3) #A list can contain anything: vectors, data frames, matrices etc. Use [[]] to access its elements.
+
+#5. Look at the structure of the list.
+str(mylist)
+mylist[3]
+mylist[3] +1
+mylist[[3]]
+mylist[[3]] +1
+
+#6. Create a data.frame df1 using L. Look at the structure again.
+df1 <- data.frame(mylist)
+colnames(df1) <- c("letters", "factors", "numbers")
+str(df1) #The data frame is the typical structure of data sets, with one row per observation and one column per variable.
+
+#7. What are the element on the second row?
+df1[2,]
+
+#8. What are the element on the second column?
+df1[,2]
+
+#9. What are the values between the 2nd and the 4th rows?
+df1[2:4,] #2:4 equals c(2, 3, 4) equals seq(from=2, to=4, by=1).
+
+#10. Save the data set as a csv. Note: Use row.names = FALSE as additional argument!
+write.csv2(df1, file="mydf.csv", row.names=FALSE)
+getwd()
+
+#11. Load the data set into R as a new object df2 and compare it with the original one df1. What is the problem here?
+df2 <- read.csv2("mydf.csv") #check ?read.csv2 for more information on the function and how to use it. For example, you can specify if the csv file has a header or not (=if the first row contains the variable names or not.) and how the variables are separated (sep="," for comma-separated values, but it might also be ";" or " " or anything else). If the data set is not huge, I recommend opening it first with a text editor of your choice so that you see which separator is used. Otherwise, try it with "," or ";" and check how R interprets the data. If you see something like (for example) "1.5,apple,4.5,7.7,green,3.6,TRUE,8.4", with only "one" variable (--> check with ncols(df2)) it means that you used the wrong separator and need to specify read.csv2("mydf.csv", sep=",").
+
+identical(df1, df2)
+str(df1)
+str(df2)
