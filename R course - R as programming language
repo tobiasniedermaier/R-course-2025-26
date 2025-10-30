@@ -1,0 +1,39 @@
+#In R, you can do *almost* everything that you can do in other programming languages. Except that R is not designed for writing software and you cannot compile codes to an executable. 
+#It is an object-oriented, functional programming language that supports control structures like if() ... else(), loops (for, while, repeat), object classes, and higher-order functions.
+
+#Some examples:
+
+#anonymous functions:
+(function(x) x^2)(x=5) #25
+
+ #A "function-generating function":
+ #We may consider a set of functions, say f1(x), f2(x), ..., fi(x), ..., fn{x} that add 1,2,...,i,...,n to the x argument. Clearly, we do not want to define all these functions but we want to define a unique function f(i):
+ f <- function(i){
+  function(x) {x+i}
+}
+f1 <-  f(1)
+f1(3)
+
+f2 <- f(2)
+f2(4)
+
+f_min_5 <- f(-5)
+f_min_5(8)
+
+f(2)(3) #5 ("Currying")
+
+#Functionals are functions that take a function as input and return a data object as output.
+l <- list(x = 1:4, y = 4:1)
+Reduce(rbind, l) #Reduce is a higher-order function / functional. rbind is the function that is used as input for Reduce().
+
+aggreg <- function(x, y, z, fun) {
+  fun(x,y,z)
+}
+aggreg(1,2,3, product)
+
+#More about higher order functions:
+#http://www.johnmyleswhite.com/notebook/2010/09/23/higher-order-functions-in-r/
+#http://www.r-bloggers.com/higher-order-functions-exercises/
+
+#This includes the functions Map(), Reduce(), Filter(), Find(), Negate(), and Position(). See also the official R help page:
+#https://stat.ethz.ch/R-manual/R-devel/library/base/html/funprog.html
