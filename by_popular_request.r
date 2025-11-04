@@ -17,19 +17,31 @@
 # - Examples use built-in datasets (iris, mtcars, airquality, women) and ISLR datasets (Auto, Credit)
 # ===============================================================
 
+## ---------------------------------------------------------------
+## 0) Packages & Data
+## ---------------------------------------------------------------
+
 #Load a package whicih contains a data set:
 library(ISLR)
 head(Auto)
 
 dat <- Auto
 
-#1. How to check if a variable is a character or a numeric?
 
-## Check if a variable is character or numeric:
+## ---------------------------------------------------------------
+## 1) Type checks (character vs numeric etc.)
+## ---------------------------------------------------------------
+
+# How to check if a variable is a character or a numeric?
+# Single variable:
 is.numeric(dat$mpg)
 is.numeric(dat$name)
-sapply(dat, is.numeric)
 is.character(iris$Species)
+
+# All variables at once:
+sapply(iris, is.numeric)
+sapply(iris, is.character)
+sapply(iris, is.factor)
 
 dat <- Credit #Credit is a data set that is included in the package ISLR which we loaded with library(ISLR). If the package is not installed, first type install.packages("ISLR", dependencies=TRUE)
 
@@ -47,28 +59,69 @@ vsd <- Vectorize(sd)
 vsd(mtcars) #same as:
 Vectorize(sd)(mtcars)
 
-## Data cleaning:
+
+## ---------------------------------------------------------------
+## 2) Data cleaning
+## ---------------------------------------------------------------
 
 head(airquality)
-#check for missing values:
+# 2a) Missing values (airquality)
+
+# Quick data overview:
 summary(airquality)
 sapply(airquality, function(x) sum(is.na(x)))
+
+# Mean with/without NAs:
 mean(airquality$Ozone) #Doesn't work because of NA values
 mean(airquality$Ozone, na.rm=TRUE)
 
+# 2b) Dichotomize variable:
+airquality$Ozone_dicho <- ifelse(airquality$Ozone > 40, "high", "low")
+
+# 2c) Winsorize outliers (practical trimming at 5%):
+airquality$Ozone_w05 <- winsor(airquality$Ozone, trim = 0.05)
+hist(airquality$Ozone)
+hist(airquality$Ozone_w05)
+
+# 2d) Standard deviation for all variables (vectorization demo)
+lapply(mtcars, sd)
+sapply(mtcars, sd)
+
+# sd() is not vectorized over data frames by default:
+# vsd <- Vectorize(sd) ; vsd(mtcars)
+vsd <- Vectorize(sd)
+vsd(mtcars)
+
+       
 #Another example with the Credit data set (remember that we assigned it to an object called dat):
 
+# 2e) Implausible values (ISLR::Credit)
+dat_credit <- Credit
 #Let's assume that more than 5 cards are implausible and we need to set them to missing (NA):
-table(dat$Cards)
-dat[dat$Cards>5,]$Cards <- NA
+table(dat_credit$Cards)
+dat_credit[dat_credit$Cards>5,]$Cards <- NA
 
 #Let's assume that the combination of Income <100 and Limit >3500 is implausible and we know that Income is reliable and there is a limit of 6000 for those individuals.
-dat[dat$Income <100 & dat$Limit >6000,]
-dim(dat[dat$Income <100 & dat$Limit >6000,])
-nrow(dat[dat$Income <100 & dat$Limit >6000,])
-ncol(dat[dat$Income <100 & dat$Limit >6000,])
-dat[dat$Income <100 & dat$Limit >6000,]$Limit <- 6000
-dat[dat$Income <100 & dat$Limit >6000,]
+dat_credit[dat_credit$Income <100 & dat_credit$Limit >6000,]
+dim(dat_credit[dat_credit$Income <100 & dat_credit$Limit >6000,])
+nrow(dat_credit[dat_credit$Income <100 & dat_credit$Limit >6000,])
+ncol(dat_credit[dat_credit$Income <100 & dat_credit$Limit >6000,])
+dat_credit[dat_credit$Income <100 & dat_credit$Limit >6000,]$Limit <- 6000
+dat_credit[dat_credit$Income <100 & dat_credit$Limit >6000,]
+
+# 2f) Column name cleanups
+colnames(dat_credit)
+colnames(dat_credit) <- tolower(colnames(dat_credit))               # all lower case
+colnames(dat_credit) <- toupper(colnames(dat_credit))               # all upper case
+# Capitalize first letter, lower case for the rest:
+colnames(dat_credit) <- paste0(toupper(substring(colnames(dat_credit), 1, 1)),
+                               tolower(substring(colnames(dat_credit), 2)))
+
+# 2g) String manipulation (e.g., normalize Y/N)
+# gsub("Y", "y", dat_credit$Married)
+# gsub("N", "n", dat_credit$Married)
+# If you have kutils installed:
+# mgsub(c("Y","N"), c("y","n"), dat_credit$Married)
 
 ## Data distribution
 
@@ -82,6 +135,11 @@ densityplot(dat$Income)
 bwplot(dat$Income)
 xyplot(Limit ~ Married, data=dat)
 qqnorm(dat$Income)
+
+# Density overlay (iris):
+dens <- density(iris$Sepal.Length)
+hist(iris$Sepal.Length, breaks = 20, freq = FALSE, main = "Sepal.Length with density")
+lines(dens)
 
 #Create a uniformly distributed variable:
 unifdist <- runif(n=10000, min=10, max=30)
@@ -255,7 +313,10 @@ anova(logreg, logreg2) #Note that anova() for model comparison is only valid in 
 lm1 <- lm(mpg ~ wt + cyl + hp, data=mtcars)
 lm2 <- lm(mpg ~ wt + cyl, data=mtcars)
 anova(lm1, lm2)
+# Note that anova() for model comparison is only valid in case of nested models. I.e. you use the same data, the same response variable, and model 1 contains all the variables that are included in model 2, but model 2 has one or more further variables. (I.e. the smaller model is a true subset of the larger model.) If this is not the case, R will still produce an output and a p value, but this is not a valid comparison.
 
+# For non-nested comparisons, use Akaike and the Bayes Information Criterion (smaller is better):
+AIC(lm1, lm2); BIC(lm1, lm2)
        
 ## Visualization:
 boxplot(dat$Age) #Check ?boxplot for the parameters that you can add. For example:
@@ -298,6 +359,16 @@ boxplot(mtcars$mpg, main="My first boxplot")
 boxplot(mtcars$mpg, main="My second boxplot\nText in second row", sub="This is a subtitle", col="red", log="y")
 boxplot(mtcars$mpg, main="My third boxplot", horizontal=TRUE)
 boxplot(mpg ~ am, data=mtcars)
+
+
+# Lattice quick looks (ISLR::Credit):
+hist(dat_credit$Income)
+hist(dat_credit$Income, breaks = 30)
+boxplot(dat_credit$Income, horizontal = TRUE)
+densityplot(dat_credit$Income)
+bwplot(dat_credit$Income)
+xyplot(Limit ~ Married, data = dat_credit)
+qqnorm(dat_credit$Income); qqline(dat_credit$Income)
 
 
 #Various plot types:
@@ -346,7 +417,7 @@ abline(v=0, lty=2)
 #https://r-charts.com/base-r/line-types/
 #https://r-graph-gallery.com/
 
-## Manupulating variable names:
+## Manipulating variable names:
        
 #Let's say you want all variable names to start with a small letter instead of a capital letter:
 colnames(dat) #Only calling a function without assignment usually does not change the values of any variable or data set. (There are exceptions, though.)
@@ -369,6 +440,7 @@ gsub("N", "n", dat$Married)
 #Vectorized version of gsub from an addon-package:
 library(kutils)
 mgsub(c("Y","N"), c("y","n"), dat$Married) #Needs the addon-package kutils. If it is not installed: install.packages("kutils", dep=T); library(kutils)
+
 
 
 
