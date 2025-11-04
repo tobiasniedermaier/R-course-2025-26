@@ -1,4 +1,5 @@
 
+#Load a package whicih contains a data set:
 library(ISLR)
 head(Auto)
 
@@ -336,5 +337,6 @@ gsub("N", "n", dat$Married)
 #Vectorized version of gsub from an addon-package:
 library(kutils)
 mgsub(c("Y","N"), c("y","n"), dat$Married) #Needs the addon-package kutils. If it is not installed: install.packages("kutils", dep=T); library(kutils)
+
 
 
