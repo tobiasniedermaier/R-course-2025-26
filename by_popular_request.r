@@ -31,6 +31,15 @@ Vectorize(sd)(mtcars)
 
 ## Data cleaning:
 
+head(airquality)
+#check for missing values:
+summary(airquality)
+sapply(airquality, function(x) sum(is.na(x)))
+mean(airquality$Ozone) #Doesn't work because of NA values
+mean(airquality$Ozone, na.rm=TRUE)
+
+#Another example with the Credit data set (remember that we assigned it to an object called dat):
+
 #Let's assume that more than 5 cards are implausible and we need to set them to missing (NA):
 table(dat$Cards)
 dat[dat$Cards>5,]$Cards <- NA
@@ -44,6 +53,7 @@ dat[dat$Income <100 & dat$Limit >6000,]$Limit <- 6000
 dat[dat$Income <100 & dat$Limit >6000,]
 
 ## Data distribution
+
 hist(dat$Income)
 hist(dat$Income, breaks=30)
 boxplot(dat$Income)
@@ -63,7 +73,7 @@ hist(unifdist)
 normdist <- rnorm(n=1000, mean=5, sd=3)
 hist(normdist)
 
-## Create a dummy variable:
+## Create a dummy variable (dichotomized):
 median(dat$Income)
 dat$Income_bin <- ifelse(dat$Income > 33, "high", "low")
 dat$Income_factor <- factor(dat$Income_bin)
@@ -98,6 +108,12 @@ table(dat$rich_caucasian_man, dat$rich_caucasian_man2)
 
 #ifelse() is easier/less code to write if you want only two categories (dichotomization). If you have three or more categories, I would recommend conditional subsetting like the definition of the variables "married_man" etc. from above.
 
+#Another example (different data set):
+dat <- women #built-in in R
+dat$height_m <- dat$height * 2.54 /100 #heigth is recorded in inch and we want to convert it to m
+dat$weight_kg <- dat$weight * 0.4535924
+dat$bmi <- dat$weight_kg / dat$height_m^2
+       
 # An example from a different data set (also built-in in R):
 
 head(airquality)
@@ -123,8 +139,10 @@ hist(airquality$Ozone_w05)
 
 #t-test:
 #Are men richer than women?
-t.test(Income ~ Gender, data=dat)
-
+t.test(Income ~ Gender, data=dat) #Compares two groups from the same variable (Income stratified by Gender).
+#Another example from a different data set:
+t.test(iris$Sepal.Length, iris$Petal.Length) #Compares mean of Sepal.Length with mean of Petal.Length in the iris data set.
+       
 #Cross-tabulation:
 table(dat$Income_factor, dat$Gender)
 table(dat$Income_factor, dat$Gender, exclude=NULL) #Would show NAs if there were any.
@@ -134,10 +152,6 @@ table(dat[,c("Income_factor","Gender","Married")])
 table(mtcars$cyl, mtcars$am)
 table(mtcars[,c("cyl","am")])
 table(mtcars$cyl, mtcars$am, mtcars$vs)
-
-#Note:
-t.test(mpg ~ am, data=mtcars) #Compares two groups from the same variable (mpg stratified by am).
-t.test(iris$Sepal.Length, iris$Petal.Length) #Compares mean of Sepal.Length with mean of Petal.Length.
 
 #Logistic regression:
 datc <- dat[complete.cases(dat),]
@@ -225,7 +239,7 @@ lm2 <- lm(mpg ~ wt + cyl, data=mtcars)
 anova(lm1, lm2)
 
        
-#Visualization:
+## Visualization:
 boxplot(dat$Age) #Check ?boxplot for the parameters that you can add. For example:
 boxplot(dat$Age, main="Boxplot of 'Age' in dat")
 boxplot(dat$Age, ylim=c(0,120))
@@ -337,6 +351,7 @@ gsub("N", "n", dat$Married)
 #Vectorized version of gsub from an addon-package:
 library(kutils)
 mgsub(c("Y","N"), c("y","n"), dat$Married) #Needs the addon-package kutils. If it is not installed: install.packages("kutils", dep=T); library(kutils)
+
 
 
 
