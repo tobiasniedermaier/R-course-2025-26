@@ -1,10 +1,6 @@
 # ===============================================================
 # R WORKSHOP: Essentials (Consolidated)
 # ===============================================================
-# This consolidated script merges the multiple versions you shared.
-# Policy: I removed only *completely redundant* code and kept
-# alternative ways and alternative datasets that illustrate the
-# same concept.
 #
 # Topics covered
 # - Packages & data
@@ -17,13 +13,14 @@
 # - Logistic regression (+ nested model comparison)
 # - Mean, median, mode; Chi-squared; ANOVA
 # - Assorted plotting gallery (incl. QQ and time-series examples)
+# - Working directory & file I/O; arrays; extra head/tail/names peek; step-by-step mode() decomposition
 #
 # Optional packages: psych, ISLR, lattice, (kutils)
 # Data used: built-in (iris, mtcars, airquality, women) + ISLR (Auto, Credit)
 # ===============================================================
 
 ## ---------------------------------------------------------------
-## 0) Packages & Data
+## 0a) Packages & Data
 ## ---------------------------------------------------------------
 # install.packages(c("psych","ISLR","lattice","kutils"), dependencies = TRUE)
 suppressPackageStartupMessages({
@@ -36,6 +33,41 @@ suppressPackageStartupMessages({
 # Quick peeks at ISLR data (loaded with library(ISLR)):
 head(Auto);     dat_isrl   <- Auto
 head(Credit);   dat_credit <- Credit
+
+# A few more handy peeks (names/colnames; head with n; tail)
+names(dat_isrl); colnames(dat_isrl)
+head(Credit, 10)
+tail(Credit)
+
+
+## ---------------------------------------------------------------
+## 0b) Working directory & file I/O 
+## ---------------------------------------------------------------
+# Working directory helpers
+getwd() # current working directory
+# setwd("...") # set working directory (uncomment & adapt)
+
+
+# CSV write/read demo (use a built-in data frame so it runs anywhere)
+write.csv(mtcars, file = "example_data.csv", row.names = FALSE)
+d_loaded <- read.csv("example_data.csv")
+
+
+# Save and load R objects (RData)
+a_list <- list(answer = 42, data = iris, comment = "whatever")
+save(a_list, file = "example_object.RData")
+load("example_object.RData")
+
+
+## ---------------------------------------------------------------
+## 0c) Arrays / higher-dimensional objects
+## ---------------------------------------------------------------
+# You can create 3D (or higher) arrays in R:
+a <- array(1:12, dim = c(3, 2, 2))
+dim(a)
+a[,,1]
+a[1,,]
+
 
 ## ---------------------------------------------------------------
 ## 1) Type checks (character vs numeric/factor)
@@ -217,6 +249,7 @@ dat_aq <- airquality
 dat_aq$Ozone_dicho <- ifelse(dat_aq$Ozone > 40, 1, 0)
 
 # GLM with binomial family (logistic regression)
+# WARNING: If you forget family = "binomial", R will do a *linear* model instead of a logistic regression!
 mylogreg <- glm(Ozone_dicho ~ Temp + Wind, data = dat_aq, family = "binomial")
 mylogreg
 summary(mylogreg)
@@ -266,6 +299,14 @@ find_mode <- function(x) {
 vec <- c(-5, 3, 6, 3, 7)
 Mode(vec); find_mode(vec)
 median(vec)
+
+# NEW: Step-by-step breakdown of the second mode approach (didactic)
+# (Using a concrete variable for readability)
+x <- datc$Cards
+u <- unique(x) #unique(datc$Cards) returns the different possible values of the variable, in the order in which they first appear in the data set. (You could get the same - but in another data type (character) with names(table(datc$Cards)).)
+x_u_matched <- match(x, u)  #match() returns the position at which it finds the values of x in u. The first 5 elements of x are 2, 3, 4, 3, 2. in u (2, 3, 4, 5, 1), those are the positions 1, 2, 3, 2, 1. "5" occurs for the first time in the 9th value of x. It is the 4th value of u. So the 9th value of match(x, u) is 4. Every other "5" in the vector x will also get the value 4 as outcome of match(x, u).
+tab <- tabulate(x_u_matched)  #tabulate() counts the number of times each integer occurs in a vector. You could also use as.numeric(table(x_u_matched)).
+u[tab == max(tab)]  #max(tab) returns the maximum of tab, i.e. the value of tabulate(x_u_matched) with the most counts / which occurs most frequently. tab == max(tab) returns TRUE for the largest value (maximum), i.e. for the value with the most occurances, and FALSE for all other values. And finally, u[tab == max(tab)] subsets the vector u (the possible values) with the position that returns TRUE, i.e. the most frequent value. And this is the definition of the mode of a vector.
 
 # Stratified summaries (ISLR::Credit):
 summary(datc)
