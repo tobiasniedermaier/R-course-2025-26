@@ -1,4 +1,22 @@
 
+# ===============================================================
+# R WORKSHOP: Essentials Cheat Sheet
+# ===============================================================
+# This script covers:
+# - Type checks (numeric, character, factor) incl. for all columns
+# - Data cleaning (missing values, implausible values, winsorization, column name fixes, string ops)
+# - Distributions & quick exploratory data analysis
+# - Dummy variables & new variables from multiple conditions
+# - t-tests, cross-tabulations
+# - Logistic regression (with model comparison)
+# - Mean, median, mode; Chi-squared; ANOVA
+# - Visualization (base R + lattice)
+#
+# Notes:
+# - Requires some optional packages: psych, ISLR, lattice, kutils (install if needed)
+# - Examples use built-in datasets (iris, mtcars, airquality, women) and ISLR datasets (Auto, Credit)
+# ===============================================================
+
 #Load a package whicih contains a data set:
 library(ISLR)
 head(Auto)
@@ -351,6 +369,7 @@ gsub("N", "n", dat$Married)
 #Vectorized version of gsub from an addon-package:
 library(kutils)
 mgsub(c("Y","N"), c("y","n"), dat$Married) #Needs the addon-package kutils. If it is not installed: install.packages("kutils", dep=T); library(kutils)
+
 
 
 
