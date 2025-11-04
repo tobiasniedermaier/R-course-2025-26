@@ -134,14 +134,20 @@ colnames(dat_credit)
 colnames(dat_credit) <- tolower(colnames(dat_credit))               # all lower case
 colnames(dat_credit) <- toupper(colnames(dat_credit))               # all upper case
 # Capitalize first letter, lower case for the rest:
-colnames(dat_credit) <- paste0(toupper(substring(colnames(dat_credit), 1, 1)),
+colnames(dat_credit) <- paste0(toupper(substring(colnames(dat_credit), first=1, last=1)),
                                tolower(substring(colnames(dat_credit), 2)))
 
 # 2g) String manipulation (normalize Y/N)
 # gsub("Y", "y", dat_credit$Married)
+##More explicit:
+# gsub(pattern="Y", replacement="y", x=dat$Married) #pattern = what to replace. replacement = with what to replace the pattern. x = the vector in which something should be replaced.
+
 # gsub("N", "n", dat_credit$Married)
 # If you have kutils installed:
 # kutils::mgsub(c("Y","N"), c("y","n"), dat_credit$Married)
+#Or:
+library(kutils)
+mgsub(c("Y","N"), c("y","n"), dat_credit$Married)
 
 ## ---------------------------------------------------------------
 ## 3) Data distribution & quick EDA
@@ -224,10 +230,10 @@ dat_credit$rich_caucasian_man <- ifelse(dat_credit$Gender == "Male" &
 t.test(mpg ~ am, data = mtcars)
 
 # Two numeric vectors (iris):
-t.test(iris$Sepal.Length, iris$Petal.Length)
+t.test(iris$Sepal.Length, iris$Petal.Length) #Compares mean of Sepal.Length with mean of Petal.Length in the iris data set.
 
 # Example from ISLR::Credit: Are men richer than women?
-t.test(Income ~ Gender, data = dat_credit)
+t.test(Income ~ Gender, data = dat_credit) #Compares two groups from the same variable (Income stratified by Gender).
 
 ## ---------------------------------------------------------------
 ## 6) Cross-tabulation
@@ -257,6 +263,7 @@ coef(mylogreg)                  # log-odds
 confint(mylogreg)               # CI on log-odds
 exp(coef(mylogreg))             # odds ratios
 exp(confint(mylogreg))          # CI for ORs
+#plot(mylogreg) #Model diagnostics
 
 # 7b) ISLR::Credit: Married ~ Income + Education (+ Cards)
 datc <- dat_credit[complete.cases(dat_credit), ]
@@ -270,6 +277,7 @@ exp(coef(logreg1)); exp(confint(logreg1))
 anova(logreg1, logreg2, test = "Chisq")
 # For non-nested comparisons, use:
 AIC(logreg1, logreg2); BIC(logreg1, logreg2)
+# Note that anova() for model comparison is only valid in case of nested models. I.e. you use the same data, the same response variable, and model 1 contains all the variables that are included in model 2, but model 2 has one or more further variables. (I.e. the smaller model is a true subset of the larger model.) If this is not the case, R will still produce an output and a p value, but this is not a valid comparison.
 
 ## ---------------------------------------------------------------
 ## 8) Mean, median, mode; Chi-squared; ANOVA
@@ -329,6 +337,7 @@ lm1 <- lm(mpg ~ wt + cyl + hp, data = mtcars)
 lm2 <- lm(mpg ~ wt + cyl, data = mtcars)
 anova(lm1, lm2)
 
+
 ## ---------------------------------------------------------------
 ## 9) Visualization (base R + lattice)
 ## ---------------------------------------------------------------
@@ -346,8 +355,8 @@ hist(iris$Sepal.Length, breaks = 20)
 # Density overlay added above in Section 3
 
 # Boxplots (base):
-boxplot(mtcars$mpg, main = "Boxplot of mpg")
-boxplot(mtcars$mpg, main = "Boxplot with subtitle", sub = "This is a subtitle", col = "red", log = "y")
+boxplot(mtcars$mpg, main = "Boxplot of mpg") #Check ?boxplot for the parameters that you can add. For example:
+boxplot(mtcars$mpg, main = "Boxplot with subtitle", sub = "This is a subtitle", col = "red", log = "y", ylim=c(0,50))
 boxplot(mtcars$mpg, main = "Horizontal boxplot", horizontal = TRUE)
 boxplot(mpg ~ am, data = mtcars)
 
@@ -364,6 +373,8 @@ hist(dat_credit$Rating, nclass = 20) # similar to breaks for historical reasons
 
 densityplot(dat_credit$Rating)
 histogram(dat_credit$Rating)
+bwplot(dat_credit$Income)
+xyplot(Limit ~ Married, data = dat_credit)
 
 # QQ diagnostics:
 qqnorm(dat_credit$Balance); qqline(dat_credit$Balance)
@@ -377,3 +388,49 @@ qqplot(dat_credit$Balance, dat_credit$Age)  # two-sample QQ plot
 # https://r-charts.com/base-r/line-types/
 # https://r-graph-gallery.com/
 # ===============================================================
+
+#Various plot types:
+x <- rnorm(500)
+y <- x + rnorm(500)
+
+par(mfrow = c(2, 3))
+
+# Data
+my_ts <- ts(matrix(rnorm(500), nrow = 500, ncol = 1),
+              start = c(1950, 1), frequency = 12)
+
+my_dates <- seq(as.Date("2005/1/1"), by = "month", length = 50)
+
+my_factor <- factor(mtcars$cyl)
+
+square <- function(x){x^2}
+
+# Scatterplot
+plot(x, y, main = "Scatterplot")
+
+# Barplot
+plot(my_factor, main = "Barplot")
+
+# Boxplot
+plot(my_factor, rnorm(32), main = "Boxplot")
+
+# Time series plot
+plot(my_ts, main = "Time series")
+
+# Time-based plot
+plot(my_dates, rnorm(50), main = "Time based plot")
+
+# Plot R function
+plot(square, 0, 10, main = "Plot a function")
+fun2 <- function(x){abs(x)}
+
+x_values <- seq(-5, 5, 0.1)
+y_values <- square(seq(-5, 5, 0.1))
+plot(x_values, y_values, main = "Plot a function", type="l")
+abline(h=10)
+abline(v=0, lty=2)
+       
+#see also: 
+#https://intro2r.com/simple-base-r-plots.html
+#https://r-charts.com/base-r/line-types/
+#https://r-graph-gallery.com/
