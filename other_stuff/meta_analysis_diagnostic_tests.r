@@ -2,6 +2,9 @@
 library(mada) #This package is used to perform a bivariate meta-analysis of sensitivity and specificity of diagnostic tests. In other words, sensitivity and specificity are pooled simultaneously to take their negative correlation into account.
 
 data(AuditC) #Loads a sample data set. Note that the data needs to have the colums TP, FN, FP, TN with the case numbers of true-positives, false-negatives, false-positives, true-negatives for every study.
+
+#There are many more R packages for meta-analysis of diagnostic tests. For example diagmeta, CopulaREMADA, diagmeta, neta4diag, bamdit. See https://cran.r-project.org/web/views/MetaAnalysis.html. What they all have in common is that you need to provide columns with TP, FN, FP, TN.
+
 dat <- AuditC #Let's assign the built-in data set to an object "dat".
 
 # Descriptives:
