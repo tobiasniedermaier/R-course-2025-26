@@ -1,8 +1,8 @@
 
-#übliche statistische Tests:
-#s. auch: https://stats.idre.ucla.edu/r/whatstat/what-statistical-analysis-should-i-usestatistical-analyses-using-r/
+#Common statistical tests:
+#see also: https://stats.idre.ucla.edu/r/whatstat/what-statistical-analysis-should-i-usestatistical-analyses-using-r/
 
-##Chi-Quadrat:
+##Chi-squared:
 library(vcd)
 (mytable <- xtabs(~Treatment+Improved, data=Arthritis))
 #         Improved
@@ -71,4 +71,5 @@ pwr.t.test(d=0.8, sig.level=0.05, power=0.9, type="two.sample", alternative="two
 p1 <- 0.5 #z.B. Se. v.gFOBT f. CRC
 p2 <- 0.7 #z.B. Se. v.FIT f. CRC
 pwr.2p.test(h=ES.h(p1,p2), sig.level=0.05, power=0.8, alternative="two.sided")
+
 
