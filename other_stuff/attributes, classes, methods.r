@@ -8,7 +8,7 @@ attributes(x) <- NULL
 x
 #Wiederherstellen der Matrix-Anordnung:
 attributes(x) <- attrib_x
-x #tada!
+x #!
 
 #Matrix-Anordnung abspeichern, etwas Struktuzerstörendes mit der Matrix machen und dann die abgespeicherte Struktur wiederherstellen:
 x+1 #naheliegender, einfacher und vektorierter, daher schneller Weg, zu jedem Matrixelement 1 dazuzuzählen.
@@ -19,12 +19,12 @@ x <- x_backup
 #jetzt eine dumme Alternative mit for-Schleife:
 for(i in 1:length(x)){x[i] <- print(x[i] + 1)}
 x #Matrix-Anordnung bleibt erhalten.
-(y <- lapply(x+1, print(sum))) #y=x+1, aber als Liste.
-(z <- unlist(y)) #Vektor
+(y <- lapply(x+1, print(sum))) #y=x+1, but as list
+(z <- unlist(y)) #Vector
 attributes(z) <- attrib_x
 z #3x3-Matrix!
 
-#Klassen:
+#Classes:
 x <- 10
 class(x) #"numeric"
 class(x) <- "character"
@@ -68,19 +68,18 @@ class(dat) <- old_dat_classes[3] #weise nur das 3. (=data.frame) Attribut wieder
 dat
 gdata::is.what(dat) #"is.data.frame" "is.list"       "is.object"     "is.recursive"
 
-#Weiteres Bsp.: R-Kurs LMU, 06OOP-4.pdf
 
 
-#aus R Advanced:
+#from R Advanced:
 
 ####################
-# R6-Klassen in R: #
+# R6 classes in R: #
 ####################
 
 rm(list=ls(all=TRUE))
 library(R6)
 Accumulator <- R6Class("Accumulator", list(
-	sum=0, #sum ist ein "Feld"/"field" der "Klasse" Accumulator
+	sum=0, #sum is a "field" of the "class" Accumulator
 	add=function(x=1){
 		self$sum <- self$sum + x
 		invisible(self)
@@ -96,7 +95,7 @@ str(x)
     # clone: function (deep = FALSE) 
     # sum: 0
 	
-x$add(4) #hat den "side-effect", dass Wert von "sum" um entspr. Betrag hochgeht
+x$add(4) #Has the "side-effect" that the value of "sum" is increased by the respective amount.
 str(x)
 # Classes 'Accumulator', 'R6' <Accumulator>
   # Public:
@@ -106,12 +105,13 @@ str(x)
 # >
 x$sum #4
 
-x$add(1)$add(-2)$sum #3 (Verkettung)
+x$add(1)$add(-2)$sum #3 (chaning)
 
-#jede "method" in eigener Zeile (Lesbarkeit):
+#Each 'method' in its own row (readability):
 x$
 	add(-5)$
 	add(10)$
 	sum
 #0
 #(="method chaning")
+
