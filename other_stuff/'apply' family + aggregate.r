@@ -5,8 +5,8 @@
 # - Example: 
 	m <- matrix(data=cbind(rnorm(30, 0), rnorm(30, 2), rnorm(30, 5)), nrow=30, ncol=3)
 #	 "how many negative numbers in 1st column?" 
-#	 Umständlicher Weg von mir: length(m[which(m[,1]<0)])
-#	 besserer Weg mit apply: apply(m, 2, function(x) length(x[x<0]))
+#	 Alternative, complicated way: length(m[which(m[,1]<0)])
+#	 Better way with apply: apply(m, 2, function(x) length(x[x<0]))
 
 # - Example: 
 	m <- matrix(data=1:100, nrow=10)
@@ -35,9 +35,9 @@ l <- list(a = 1:10, b = 11:20) #"the mean of the values in each element"
 #Complicated way: 
 mean(as.numeric(l[[1]])) #und
 mean(as.numeric(l[[2]]))
-#besserer Weg mit lapply: 
+#Better way with lapply: 
 lapply(l, mean)
-#noch besser: 
+#Even nicer: 
 sapply(l, mean)
 
 #mapply:
@@ -113,5 +113,3 @@ numerics <- Filter(is.numeric, dat)
 sapply(numerics, mean) #Or slightly better because it returns a data.frame as output (otherwise identical):
 Kmisc::dapply(numerics, mean)
 as.data.frame(sapply(numerics, mean))
-
-
