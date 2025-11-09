@@ -14,11 +14,11 @@ chisq.test(mytable)
 ##Fisher's exact test:
 fisher.test(mytable)
 
-##LR, Pearson, Phi, Kontingenzkoeff., Cramer's V:
-assocstats(mytable) #aus dem vcd-Paket (visualizing categorical data)
+##LR, Pearson, Phi, contingency coeff., Cramer's V:
+assocstats(mytable) #from the vcd package (visualizing categorical data)
 summary(assocstats(mytable)) #etwas ausführlicher
 
-##one-sample t test: (example taken from http://r-statistics.co/Statistical-Tests-in-R.html)
+##One-sample t test: (example taken from http://r-statistics.co/Statistical-Tests-in-R.html)
 set.seed(100)
 x <- rnorm(50, mean = 10, sd = 0.5)
 t.test(x, mu=10)
@@ -71,5 +71,6 @@ pwr.t.test(d=0.8, sig.level=0.05, power=0.9, type="two.sample", alternative="two
 p1 <- 0.5 #z.B. Se. v.gFOBT f. CRC
 p2 <- 0.7 #z.B. Se. v.FIT f. CRC
 pwr.2p.test(h=ES.h(p1,p2), sig.level=0.05, power=0.8, alternative="two.sided")
+
 
 
