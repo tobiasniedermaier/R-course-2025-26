@@ -2,13 +2,13 @@
 #https://www.r-bloggers.com/using-apply-sapply-lapply-in-r/
 #- apply:
 
-# - Bsp.: 
+# - Example: 
 	m <- matrix(data=cbind(rnorm(30, 0), rnorm(30, 2), rnorm(30, 5)), nrow=30, ncol=3)
 #	 "how many negative numbers in 1st column?" 
 #	 Umständlicher Weg von mir: length(m[which(m[,1]<0)])
 #	 besserer Weg mit apply: apply(m, 2, function(x) length(x[x<0]))
 
-# - Bsp.: 
+# - Example: 
 	m <- matrix(data=1:100, nrow=10)
 #	 Mean of each column?
 	 
@@ -30,7 +30,7 @@ dimnames(x)[[1]] <- letters[1:8]
 #https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/
 #- lapply:
 
-#Bsp: 
+#Example: 
 l <- list(a = 1:10, b = 11:20) #"the mean of the values in each element"
 #Complicated way: 
 mean(as.numeric(l[[1]])) #und
@@ -113,4 +113,5 @@ numerics <- Filter(is.numeric, dat)
 sapply(numerics, mean) #Or slightly better because it returns a data.frame as output (otherwise identical):
 Kmisc::dapply(numerics, mean)
 as.data.frame(sapply(numerics, mean))
+
 
