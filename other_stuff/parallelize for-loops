@@ -14,10 +14,10 @@ for (i in seq_along(num)){
 }
 y
 
-#Mod., damit Schleife keine "side-effects" hat:
+#Modification to remove "side-effects" of the loop:
 y <- list()
 for (i in seq_along(num)){
- y[[i]] <- local({ #local() erzwingt, dass Variablen in lokaler Environment gesucht werden und nicht in globaler. S. https://stackoverflow.com/questions/6216968/r-force-local-scope
+ y[[i]] <- local({ #local() enforces that variables are looked up in the local environment and not in the global environment. See https://stackoverflow.com/questions/6216968/r-force-local-scope
  x <- X[[i]]
  tmp <- sqrt(x)
  tmp
@@ -25,24 +25,24 @@ for (i in seq_along(num)){
 }
 y
 
-#nun als lapply-call:
+#Now as lapply call:
 y <- lapply(1:5, function(x){
  tmp <- sqrt(x)
  tmp
 })
 
-#oder wie ich es gemacht hätte:
+#Or how I would have done it:
 lapply(1:5, sqrt)
 
-#etwas komplexer:
+#slightly more complex:
 system.time(y <- lapply(1:5, function(x){
  tmp1 <- sqrt(x)
  tmp2 <- x^2
  list(y=tmp1, z=tmp2)
-})) #ca. 1,5 - 1,6 Sekunden auf Laptop
+})) #approximately 1,5 - 1,6 seconds on my laptop
 y
 
-#parallelisieren:
+#parallelize:
 library(future.apply)
 plan(multiprocess)
 
@@ -53,3 +53,4 @@ system.time(y <- future_lapply(k, function(x){
  list(y=tmp1, z=tmp2)
 }))
 y
+
