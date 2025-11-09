@@ -3,7 +3,7 @@
 
 rm(list=ls(all=TRUE))
 
-#normales assignment:
+#normal assignment:
 x <- 5
 x #5
 
@@ -24,23 +24,26 @@ y() #5
 z #5 (!)
 rm(list=ls(all=TRUE))
 
-#äquivalent:
+#equivalent:
 y <- function(){assign("z", 5, envir= .GlobalEnv)}
 z #Error: object 'z' not found
-y() #es passiert scheinbar nichts
+y() #seemingly nothing happens
 z #5 (!)
 rm(list=ls(all=TRUE))
 
-#noch ein Beispiel:
+#another example:
 test <- function(x){if (x %% 2 == 0) y <<- "odd" else y <<- "even"}
 test(5)
 y #"even"
 test(6)
 y #"odd"
 
-test2 <- function(x) {if (x %% 2 == 0) return(c("odd")) else return(c("even"))} #"klassische" Variante ohne side-effects
+test2 <- function(x) {if (x %% 2 == 0) return(c("odd")) else return(c("even"))} #"classical" variant without side-effects
 
-#in Worten zusammengefasst: normalerweise sind Funktionen in r "in sich geschlossen" bzw. haben keine "side effects", d.h. der bloße Funktionsaufruf weist keinen Objekten außerhalb der Funktion irgendwelche Werte zu. Man kann aber natürlich das Ergebnis des Funktionsaufrufs einem Objekt zuweisen. Mit "super assignment" dagegen wird tatsächlich einem Objekt ein Wert zugewiesen schon durch den bloßen Aufruf der Funktion.
+#In words: Functions are usually "self-contained" / have no "side-effects". 
+#That means calling a function alone (without explicitely assigning the result to an object) does not assign any values to objects in the work space. 
+#(Although the result may of course be assigned to an object explicitely.) 
+#In contrast, with "super assignment" (out-of-scope assignment, global assignment), the function call alone will already assign a value to an object in the work space.
 
 #scope of functions:
 a <- 0
@@ -150,4 +153,5 @@ else return(x)
 
 larger_5_alt(3) #FALSE
 larger_5_alt(8) #8
+
 
