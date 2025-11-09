@@ -68,7 +68,7 @@ basic_stat <- list(mean = mean, median = median, sd = sd)
 fapply(1:10, basic_stat)
 unlist(fapply(1:10, basic_stat))
 
-#wie ich es gemacht hätte:
+#How I would have done it:
 basicstats <- function(x, ...){
  res <- t(data.frame(mean(x, ...), median(x, ...), sd(x, ...)))
  rownames(res) <- c("Mean","Median","SD")
@@ -76,7 +76,7 @@ basicstats <- function(x, ...){
 }
 basicstats(c(1, 4, 5, 6, 7, 10, 20))
 
-#"selbstgebaute" Version von sapply: (Bsp. aus Thomas Mailund's Buch "Functional Programming in R", Kap. 4 "Higher-Order Functions")
+#"self-built" version of sapply: (Example from Thomas Mailund's book "Functional Programming in R", chapter 4 "Higher-Order Functions")
 myapply <- function(x, f, ...){
   result <- x
   for (i in seq_along(x)) {result[i] <- f(x[i])}
@@ -91,7 +91,7 @@ add <- function(x, y, z) {
   x+y+z
 }
 
-#oder besser, damit beliebig viele Summanden:
+#Or better, to allow for an arbitrary number of arguments:
 add <- function(x, ...){
   sum(x, ...)
 }
@@ -113,12 +113,12 @@ aggreg(1,2,3, product)
 #http://www.r-bloggers.com/higher-order-functions-exercises/
 
 #Exercise 3
-##Vektor 1:10. Ich will alle Zahlen mit 2 und mit 4 multiplizieren. Wie?
-Map(`*`, list(1:10), c(2,4)) #"Musterlösung"
-do.call("cbind", lapply(1:10, `*`,c(2,4))) #meine Lösung
-for (i in c(2,4)){print((1:10)*i)} #"Schleifenlösung" von mir
-mapply(`*`, MoreArgs=list(c(2,4)), 1:10) #meine mapply-Lösung (Map und mapply sind dasselbe, nur Map hat simplify=FALSE als default, mapply dagegen simplify=TRUE)
-sapply(1:10, `*`,c(2,4)) #noch eine Lösung von mir
+##Vector 1:10. We want to multiply all numbers with 2 and with 4. How?
+Map(`*`, list(1:10), c(2,4)) #An elegant solution.
+do.call("cbind", lapply(1:10, `*`,c(2,4))) #An alternative solution.
+for (i in c(2,4)){print((1:10)*i)} #"for-loop" solution
+mapply(`*`, MoreArgs=list(c(2,4)), 1:10) #mapply solution (Map and mapply are the same, only that Map has simplify=FALSE as default, whereas mapply has simplify=TRUE).
+sapply(1:10, `*`,c(2,4)) #Yet another solution.
 
 #Exercise 4
 #Expression sample(LETTERS, 5, replace=TRUE) obtains 5 random letters.
@@ -126,10 +126,10 @@ sapply(1:10, `*`,c(2,4)) #noch eine Lösung von mir
 #Note: use a fixed random seed: set.seed(14)
 set.seed(14)
 FUN <- function(i){sample(LETTERS, i, replace=TRUE)}
-lapply(1:10, FUN) #gleiches Ergebnis wie in "Musterlösung" ebd. verwendet aber Map:
+lapply(1:10, FUN) #Alternatively using Map():
 set.seed(14)
 Map(sample, list(LETTERS), 1:10, replace=TRUE)
-#for-Schleifenlösung:
+#for loop (alternative):
 res <- list()
 for (i in 1:10){
   res[[i]] <- sample(LETTERS, i, replace=TRUE)
@@ -143,7 +143,7 @@ is.prime <- Vectorize(function(n){
 c(100:200)[is.prime(100:200)]
 Filter(is.prime, 100:200)
 res <- sapply(100:200, is.prime) * 100:200
-res <- res[res>0] #wenn man aus irgendeinem Grund weder c() noch Filter() verwenden will
+res <- res[res>0] #If someone doesn't want to use c() or Filter() for whatever reason.
 
 #Exercise 6:
 words <- read.table("D:\\Daten Samsung Notebook\\Statistik\\R üben\\wordsEn.txt")
@@ -151,11 +151,9 @@ words <- read.table("D:\\Daten Samsung Notebook\\Statistik\\R üben\\wordsEn.txt
 containsVowel <- function(x) grepl("a|o|e|i|u", x)
 #find all words that do not contain any vowels.
 noVowel <- Negate(containsVowel)
-noVowel2 <- function(x){!containsVowel(x)} #wie man es ohne Negate() machen könnte
-lapply(words, containsVowel) #gedanklicher Zwischenschritt
+noVowel2 <- function(x){!containsVowel(x)} #How it could be done without Negate().
+lapply(words, containsVowel) #logical intermediate step
 words[sapply(words, noVowel)] #ok.
-#Musterlösung wäre angeblich: Filter(Negate(containsVowel), words)
-#funktioniert aber nicht
 
 #Exercise 7:
 #a) find the smallest number between 10000 and 20000 that is divisible by 1234
@@ -163,7 +161,7 @@ numbers <- seq(10000, 20000, 1)
 divisible_by_1234 <- function(x){
   if (x %% 1234 == 0) {return(TRUE)} else {return(FALSE)}
 }
-#oder kürzer:
+#or shorter:
 div_by_1234 <- function(x){
   x %% 1234 == 0
 }
@@ -171,12 +169,12 @@ div_by_1234 <- function(x){
 Filter(divisible_by_1234, numbers)[1]
 
 #b) find the largest number between 10000 and 20000 that is divisible by 1234
-Filter(divisible_by_1234, numbers)[length(Filter(divisible_by_1234, numbers))] #braucht 0.27 Sek. auf Netbook
+Filter(divisible_by_1234, numbers)[length(Filter(divisible_by_1234, numbers))]
 #oder:
 last <- function(x){x[length(x)]}
-last(Filter(divisible_by_1234, numbers)) #braucht 0.14 Sek. auf Netbook
-#Musterlösung:
-Find(divisible_by_1234, 10000:20000, right=TRUE) #braucht nur 0.01 Sek. auf Netbook! Würde sich also durchaus lohnen, die "Find"-Funktion in mein Repertoire aufzunehmen.
+last(Filter(divisible_by_1234, numbers))
+#Fastest solution:
+Find(divisible_by_1234, 10000:20000, right=TRUE) #Blazing fast even on old and slow computers.
 
 #Exercise 8:
 library(babynames)
@@ -189,26 +187,25 @@ Reduce(intersect, namesData)
 
 #b) names that are only present in year 2014:
 names_2014 <- namesData$`2014`
-#eigenartige Musterlösung, die ich nicht verstehe und ich komme auch auf keine einfachere.
 
 #Exercise 9:
 moreThan3 <- function(x) nchar(x) > 3
 #Inside each year list leave only the names that have 3 letters or less.
 lessThan4 <- Negate(moreThan3)
-lapply(namesData, lessThan4) #Zwischenschritt
+lapply(namesData, lessThan4) #Intermediate step
 
-#Musterlösung, auf die ich nie gekommen wäre:
+#solution:
 namesLessThan4 <- Map(Filter, list(Negate(moreThan3)), namesData)
 
-#Alternative Lösung von mir:
+#Alternative solution:
 which_moreThan3 <- function(x){x[nchar(x)>3]}
 lapply(namesData, which_moreThan3)
-#tats. Anzahl der Buchstaben in jedem Namen:
+#Actual number of letters in each name:
 lapply(lapply(namesData, which_moreThan3), nchar)
-#Probe:
+#Check:
 which_lessThan4 <- function(x){x[nchar(x)<=3]}
 lapply(namesData, which_lessThan4)
-#und wenn man lieber eine Funktion in der Form f(x) anwenden will anstatt lapply(x, f), kann man auch folgendes machen:
+#Or if you prefer writing f(x) instead of lapply(x, f):
 x_which_lessThan4 <- function(data){
   lapply(data, which_lessThan4)
 }
@@ -222,20 +219,20 @@ x_which_less_than_n <- function(data, n){
 x_which_less_than_n(data=namesData, n=4)
 
 
-#mehr Interessantes aus #http://www.quantide.com/ramarro-chapter-05/
-function_list <- list(m=mean, s=sd) #erstellt eine Liste von Funktionen
+#More interesting stuff from http://www.quantide.com/ramarro-chapter-05/
+function_list <- list(m=mean, s=sd) #Creates a list of functions
 x <- 1:10
-function_list[[1]] #1. Funktion in der Liste (mean)
-function_list[[1]](1:10) #1. Funktion auf 1:10 angewendet
-function_list$m(1:10) #Zugriff auf die 1. Funktion (m) über den Namen anstatt über Position in Liste
-function_list[[2]](1:10) #2. Funktion auf 1:10 angewendet
-mymean <- function_list[[1]] #1. Funktion einem Objekt zugewiesen
+function_list[[1]] #First function in the list (mean)
+function_list[[1]](1:10) #Apply first function to 1:10
+function_list$m(1:10) #Access/index the first function (m) by name and not by its position in the list
+function_list[[2]](1:10) #Apply second function to 1:10
+mymean <- function_list[[1]] #Assign first function to an object
 mymean(1:10) #5.5
 fun <- function(f, ...){f(...)} #function that takes a function f() as argument along with any other arguments ‘’...’’ and returns f(...). 
 lapply(function_list, fun, 1:10)
 
 
-#Regressionen "automatisiert" machen:
+#Transform regression function into a version where the syntax resembes more the majority of R functions:
 xyform <- function(y_var, x_vars){
  as.formula(sprintf("%s ~ %s",
  y_var, paste(x_vars, collapse="+")))
@@ -244,7 +241,7 @@ xyform <- function(y_var, x_vars){
 lm(xyform("mpg",c("cyl","hp","wt")), data=mtcars)
 glm(xyform("am",c("cyl","hp","wt")), data=mtcars)
 
-#y-Variable deparsed, sodass man keine Anführungszeichen dafür braucht:
+#deparsing y-variable deparsed so that we don't need quotation marks anymore:
 xyform <- function(y_var, x_vars){
  y_var <- deparse(substitute(y_var))
  as.formula(sprintf("%s ~ %s",
@@ -252,5 +249,6 @@ xyform <- function(y_var, x_vars){
 } 
 lm(xyform(mpg,c("cyl","hp","wt")), data=mtcars)
 
-library(Hmisc) #um auch keine Anführungszeichen für die x-Variablen zu brauchen:
+library(Hmisc) #So that we also don't need quotation marks for the x-variables anymore:
 lm(xyform(mpg, Cs(cyl,hp,wt)), data=mtcars)
+
