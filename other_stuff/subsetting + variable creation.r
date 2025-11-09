@@ -7,7 +7,7 @@ mtcars[which(mtcars$cyl>=6 & mtcars$hp>150 & mtcars$wt<3.5),]
 attach(mtcars)
 mtcars[which(cyl>=6 & hp>150 & wt<3.5),]
 detach(mtcars)
-#3.) Best soltion using Base R:
+#3.) Best solution using Base R:
 subset(mtcars, cyl>=6 & hp>150 & wt<3.5)
 #4.) Another solution using only Base R:
 with(mtcars, mtcars[cyl>=6 & hp>150 & wt<3.5,]) #Rarely used.
@@ -21,28 +21,29 @@ filter(mtcars, cyl>=6, hp>150, wt<3.5)
 #7.) Using the sqldf-Paket:
 library(sqldf)
 sqldf("select * from mtcars where cyl>=6 and hp>150 and wt<3.5") #Useful for people who worked with SQL previously.
-#zu den weiteren Funktionen von sqldf s.  https://jasdumas.github.io/tech-short-papers/sqldf_tutorial.html#wild_card_match_queries
+#For reference of sqldf, see.  https://jasdumas.github.io/tech-short-papers/sqldf_tutorial.html#wild_card_match_queries
 
-#within ist im Prinzip überflüssig, da genauso gut alles mit with oder transform machbar. Nur die Syntax ist anders und kürzer, falls mehrere Transformationsschritte. S. https://www.r-bloggers.com/friday-function-triple-bill-with-vs-within-vs-transform/
+#within is practically unnecessary because the same can be done using with() or transform(). Only the syntax is different and slightly shorter on case of several transformation steps. See https://www.r-bloggers.com/friday-function-triple-bill-with-vs-within-vs-transform/
 
-#die verschiedenen Möglichkeiten, eine neue Variable aus zwei existierenden Variablen zu bilden:
+#The various ways of creating a new variable based on two existing variables:
 library(MASS)
 head(anorexia); ls.str(anorexia)
 anorexia$wtDiff1 <- anorexia$Postwt - anorexia$Prewt
-#oder mit base-R und attach und detach:
+#base-R and attach and detach:
 attach(anorexia)
 anorexia$wtDiff2 <- Postwt - Prewt
-detach(anorexia) #Es wird aber allgemein nicht empfohlen, mit attach und detach zu arbeiten, weil sie zu schwer nachvollziehbaren Fehlern führen können.
-#oder mit base-R und within:
+detach(anorexia) #It is discouraged to work with attach and detach because they may lead to errors which are hard to analyze and debug.
+#base-R and within:
 anorexia <- within(anorexia, wtDiff3 <- Postwt - Prewt)
-#oder mit base-R und transform:
+#base-R and transform:
 anorexia <- transform(anorexia, wtDiff4 = Postwt - Prewt)
-#oder mit dplyr und mutate:
+#dplyr and mutate:
 anorexia <- mutate(anorexia, wtDiff5 = Postwt - Prewt)
-#oder mit data.table:
+#data.table:
 anorexia <- as.data.table(anorexia)
 anorexia[,wtDiff6 := Postwt - Prewt]
 
-#- man kann mehreren Variablen "in einem Rutsch" den gleichen Wert zuweisen:
-(a <- b <- 5) # weist a den Wert von b zu und b wird 5 zugewiesen.
+#- One can also assign the same value to several variables at a time:
+(a <- b <- 5)
+
 
