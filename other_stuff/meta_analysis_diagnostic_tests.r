@@ -45,3 +45,26 @@ while(i <= nrow(dat)){
   i <- i+1
 }
 
+#Funnel plot to address publication bias:
+require(metafor)
+require(mada)
+require(MVPBT)
+data(cervical) #from the MVPBT package
+
+LAG <- cervical[cervical$method==2,]
+
+fit1 <- reitsma(LAG) #from the mada package
+summary(fit1)     # results of the bivariate meta-analysis
+
+###
+
+attach(LAG)
+dta1 <- edta(TP,FN,TN,FP) #same as edta(LAG$TP, LAG$FN, LAG$TN, LAG$FP)
+detach(LAG)
+
+###
+
+attach(dta1)
+bifunnel(y,S) #same as bifunnel(dta1$y, dta1$S)
+detach(dta1)
+
