@@ -1,0 +1,44 @@
+rm(list=ls(all=TRUE))
+
+# Exercise 2:
+
+## Task 1
+
+#1. Define a vector x containing 100 values between 0 and 10.
+x <- runif(n=100, min=0, max=10) #runif creates n (here: 100) uniformly distributed values.
+#If equally-spaced (was not specified!): 
+x <- seq(0, 10, length.out = 100)
+
+#2. Define a second variable y using sin(x).
+y <- sin(x)
+
+#3. Plot both variables in a scatter plot with the according x and y axis. Use the additional argument pch = 20. What does it do?
+plot(x, y, pch=20)
+
+#4. Do the same, but swap the axis now. However, the axis name should stay the same as before.
+plot(y, x, pch=20, xlab = "x", ylab = "y")
+
+#5. Now, do the same as a line plot. Add a title. Add the additional argument lty = 2.
+x <- sort(x)
+y <- sin(x)
+plot(y, x, type="l", lty=2, main = "Sinus function")
+
+#6. Combine a scatter and a line plot: make a scatter plot and use the lines() function to add a line.
+plot(x,y) #Scatter plot
+lines(c(0:10), rep(0,11)) #rep(0,11) repeats the number 0 11 times.
+
+#7. Create a new variable x <- c(1:10, 1:20, 1:30, 1:40, 1:50). Plot a histogram using 5 breaks.
+x <- c(1:10, 1:20, 1:30, 1:40, 1:50)
+hist(x, breaks=5)
+
+#8. Add a line to the histogram with x-axis values 1:50 and y-axis values 50:1. Use the additional argument lwd = 2.
+lines(x=1:50, y=50:1, lwd=2)
+
+#9. Define a data set using the command df <- data.frame(x = c(rnorm(100), rexp(100)), group = rep(1:2, each = 100)).
+df <- data.frame(x = c(rnorm(100), rexp(100)), group = rep(1:2, each = 100))
+
+#10. Make a Boxplot of the variable x.
+boxplot(df$x)
+
+#11. Make a Boxplot for both variables.
+boxplot(x ~ group, data=df)
