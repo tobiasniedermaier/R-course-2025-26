@@ -8,3 +8,4 @@ Some of the "extras" I added:
   - Niedermaier - Becoming a Better R Programmer.pdf (Some good practice guidance.)
   - various codes I wrote by myself over the years to get a better understanding of R not only as tool for statistical analyses but also as programming language.
   - A comparison of base R and dplyr.
+  - A bootstrap tutorial.
