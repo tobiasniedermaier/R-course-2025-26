@@ -93,6 +93,38 @@ lm1 <- lm(mpg ~ wt + hp + cyl, data=mtcars)
 lm2 <- lm(mpg ~ 1, data=mtcars) #intercept only
 anova(lm1, lm2) #same p value
 
+#ANOVA:
+set.seed(42)
+group_A <- rnorm(30, mean = 5,  sd = 1)
+group_B <- rnorm(30, mean = 6,  sd = 1.5)
+group_C <- rnorm(30, mean = 7,  sd = 1)
+mydf <- data.frame(
+  value = c(group_A, group_B, group_C),
+  group = factor(rep(c("A","B","C"), each = 30))
+)
+anova_model <- aov(value ~ group, data = mydf)
+summary(anova_model)
+#Post-hoc-Test (Tukey HSD)
+TukeyHSD(anova_model)
+
+# Kruskal-Wallis Test
+kruskal.test(value ~ group, data = mydf)
+
+#McNemar-Test:
+m <- matrix(c(30, 10,
+              5,  40),
+            nrow = 2,
+            byrow = TRUE)
+
+rownames(m) <- c("before_Pos", "before_Neg")
+colnames(m) <- c("after_Pos", "after_Neg")
+
+m
+
+# McNemar-Test
+mcnemar.test(m)
+
+
 #Chi-squared test:
 (mymat <- matrix(round(runif(16, min=0, max=15)), nrow=4, byrow=TRUE))
 rownames(mymat) <- LETTERS[1:4]
@@ -189,4 +221,3 @@ pwr.t.test(d=0.8, sig.level=0.05, power=0.9, type="two.sample", alternative="two
 p1 <- 0.5 #z.B. Se. v.gFOBT f. CRC
 p2 <- 0.7 #z.B. Se. v.FIT f. CRC
 pwr.2p.test(h=ES.h(p1,p2), sig.level=0.05, power=0.8, alternative="two.sided")
-
