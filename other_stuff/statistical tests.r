@@ -26,6 +26,15 @@ t.test(x, mu=10)
 ##Two-sample t-Test (Welch test):
 t.test(1:10, y = c(7:20))
 
+#Note that you can also use the "formula syntax" and that you can specify if you want to test one- or two-sided and the alpha level:
+with(mtcars, t.test(mpg[am == 0], mpg[am == 1]))
+t.test(mtcars$mpg ~ mtcars$am) #same
+t.test(mpg ~ am, data=mtcars) #same
+t.test(mpg ~ am, data=mtcars, alternative="two.sided") #Same, because two.sided is the default option.
+t.test(mpg ~ am, data=mtcars, alternative="greater") #One-sided
+t.test(mpg ~ am, data=mtcars, alternative="less") #One-sided
+t.test(mpg ~ am, data=mtcars, conf.level=0.90) #For 90% confidence intervals.
+
 ##Paired t-Test:
 #Time in seconds before training (a) and after training (b) for each athlete:
 a = c(12.9, 13.5, 12.8, 15.6, 17.2, 19.2, 12.6, 15.3, 14.4, 11.3)
@@ -71,6 +80,7 @@ pwr.t.test(d=0.8, sig.level=0.05, power=0.9, type="two.sample", alternative="two
 p1 <- 0.5 #z.B. Se. v.gFOBT f. CRC
 p2 <- 0.7 #z.B. Se. v.FIT f. CRC
 pwr.2p.test(h=ES.h(p1,p2), sig.level=0.05, power=0.8, alternative="two.sided")
+
 
 
 
