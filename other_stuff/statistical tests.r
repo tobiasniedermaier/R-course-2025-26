@@ -36,6 +36,7 @@ t.test(mpg ~ am, data=mtcars, alternative="two.sided") #Same, because two.sided 
 t.test(mpg ~ am, data=mtcars, alternative="greater") #One-sided
 t.test(mpg ~ am, data=mtcars, alternative="less") #One-sided
 t.test(mpg ~ am, data=mtcars, conf.level=0.90) #For 90% confidence intervals.
+t.test(mpg ~ am, data=mtcars, var.equal=TRUE) #Assuming equal variances in the groups am=1 and am=1.
 
 ##Paired t-Test:
 #Time in seconds before training (a) and after training (b) for each athlete:
@@ -79,6 +80,11 @@ t.test(x, y) #For comparison.
 #F-Test for equality of variances:
 var.test(a, b) #Tests: H0: σ1² = σ2² vs H1: σ1² ≠ σ2²
 
+#Another example:
+mpg_4 <- mtcars$mpg[mtcars$cyl == 4]
+mpg_6 <- mtcars$mpg[mtcars$cyl == 6]
+var.test(mpg_4, mpg_6)
+
 #F test in linear regression to check if the model is better than the null model:
 mylm <- lm(mpg ~ wt + hp + cyl, data=mtcars)
 summary(mylm) #F-statistic: 50.17 on 3 and 28 DF,  p-value: 2.184e-11 -> Yes, the model is significantly better than the null model. Tests if all coefficients (for wt, hp, cyl) are 0 (H0) vs. if at least one of them is non-zero.
@@ -87,7 +93,15 @@ lm1 <- lm(mpg ~ wt + hp + cyl, data=mtcars)
 lm2 <- lm(mpg ~ 1, data=mtcars) #intercept only
 anova(lm1, lm2) #same p value
 
-#Wilcoxon rank sum test:
+#Chi-squared test:
+(mymat <- matrix(round(runif(16, min=0, max=15)), nrow=4, byrow=TRUE))
+rownames(mymat) <- LETTERS[1:4]
+colnames(mymat) <- letters[1:4]
+chisq.test(mymat)
+chisq.test(mymat, correct=FALSE)
+fisher.test(mymat, simulate.p.value=TRUE, B=5000)
+
+#Wilcoxon rank sum test (Mann-Whitney-U test):
 numeric_vector <- c(20, 29, 24, 19, 20, 22, 28, 23, 19, 19)
 wilcox.test(numeric_vector, mu=20, conf.int = TRUE)
 
@@ -120,11 +134,6 @@ cor.test(mtcars$mpg, mtcars$hp, method = "spearman")
 normaly_disb <- rnorm(100, mean=5, sd=1)
 shapiro.test(normaly_disb) #if p<0.05 -> not normally distributed
 
-#Kolmogorov-Smirnov test is used to check whether 2 samples follow the same distribution
-x <- rnorm(50)
-y <- runif(50)
-ks.test(x, y)
-
 #Binomial test:
 successes <- 5
 trials <- 12
@@ -148,7 +157,7 @@ get_package <- function(pkg) {
 get_package("RVAideMemoire")
 mood.medtest(mpg ~ factor(am), data = mtcars)
 
-#Kolmogorov-Smirnov test:
+#Kolmogorov-Smirnov test: (Used to check whether 2 samples follow the same distribution)
 x <- rnorm(50)
 y <- runif(30)
 # Do x and y come from the same distribution?
@@ -180,3 +189,4 @@ pwr.t.test(d=0.8, sig.level=0.05, power=0.9, type="two.sample", alternative="two
 p1 <- 0.5 #z.B. Se. v.gFOBT f. CRC
 p2 <- 0.7 #z.B. Se. v.FIT f. CRC
 pwr.2p.test(h=ES.h(p1,p2), sig.level=0.05, power=0.8, alternative="two.sided")
+
