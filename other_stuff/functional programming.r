@@ -4,8 +4,7 @@
 
 #anonymous functions:
 (function(x) x^2)(x=5) #25
-#Idee: wenn man Funktion nur ein oder zwei mal braucht und es sich nicht lohnt dafür eine Funktion mit Namen zu schreiben.
-
+#Rationale: If you only need a (typically simple) function once or twice, it's not worth creating a dedicated function with its own name.
 
 #We may consider a set of functions, say f1(x), f2(x), ..., fi(x), ..., fn{x} that add 1,2,...,i,...,n to the x argument. Clearly, we do not want to define all these functions but we want to define a unique function f(i):
 f <- function(i){
@@ -21,9 +20,9 @@ f2(4) #6
 f_min_5 <- f(-5) #f_min_5 rechnet x-5
 f_min_5(8) #3
 
-f(2)(3) #5 ("Currying")
+f(2)(3) #5 ("currying")
 
-#noch eine Stufe "Currying":
+#Another level of "currying":
 f <- function(a){
   function(b){
     function(c)
@@ -251,4 +250,5 @@ lm(xyform(mpg,c("cyl","hp","wt")), data=mtcars)
 
 library(Hmisc) #So that we also don't need quotation marks for the x-variables anymore:
 lm(xyform(mpg, Cs(cyl,hp,wt)), data=mtcars)
+
 
