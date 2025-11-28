@@ -15,8 +15,8 @@ str(jDat)
 library(lattice)
 
 #scatterplots:
-xyplot(lifeExp ~ gdpPercap, jDat) #ohne Raster
-xyplot(lifeExp ~ gdpPercap, jDat, grid=T) #mit Raster
+xyplot(lifeExp ~ gdpPercap, jDat) #without grid
+xyplot(lifeExp ~ gdpPercap, jDat, grid=T) #with grid
 xyplot(lifeExp ~ gdpPercap, jDat, grid=T, scales=list(x=list(log=10, equispaced.log=F)), type=c("p","r"))
 xyplot(lifeExp ~ gdpPercap, jDat, grid=T, scales=list(x=list(log=10, equispaced.log=F)), type=c("p", "smooth"), col.line="darkorange", lwd=3) #with bold, smooth, orange line
 
@@ -98,4 +98,5 @@ bwplot(cyl~mpg, data=mtcars, main="Car Milage Data", ylab="Number of Cylinders",
 
 #ggplot2:
 (ggboxplot <- ggplot(data=mtcars, aes(x=cyl, y=mpg, group=cyl)) + geom_boxplot() + theme_bw() + scale_x_discrete(name = "Number of cylinders") + scale_y_continuous(name = "Miles per gallon"))
+
 
