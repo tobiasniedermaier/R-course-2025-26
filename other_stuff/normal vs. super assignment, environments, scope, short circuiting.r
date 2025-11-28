@@ -121,17 +121,17 @@ env1$mtcars #NULL
 env1$mtcars <- mtcars
 env1$mtcars$mpg
 
-#D.h. mit environments kann man praktisch eine zweite R-Session eröffnen, in der dieselben Variablen andere Werte zugewiesen bekommen und mit diesen kann man auch simultan rechnen. Außerdem kann man damit super assignment sicher verwenden, indem man ebd. nur in neuer environment macht.
+#It means that with environments, you can practically open a second R session in which you assign different values to one variable, depending on its environment. And it is safer because variable values in one environment persist even if you accidently overwrite them in a different environent.
 
 summary(env1$mtcars)
 env1$iris <- iris
 ls.str(env1)
 
-#neue environment mit zwei data frames und sonst nichts:
+#New environment with two data frames and nothing else:
 env3 <- new.env()
 env3$iris <- iris
 env3$mtcars <- mtcars
-eapply(env3, summary)
+eapply(env3, summary) #eapply is a function of the *apply family (like lapply, sapply, mapply, rapply) specifically for enwironments.
 
 
 ####################
@@ -145,7 +145,7 @@ x > 5 && return(x)
 larger_5(3) #FALSE
 larger_5(8) #8
 
-#identisch:
+#identical:
 larger_5_alt <- function(x){
 if (x<=5) return(FALSE)
 else return(x)
@@ -153,5 +153,6 @@ else return(x)
 
 larger_5_alt(3) #FALSE
 larger_5_alt(8) #8
+
 
 
