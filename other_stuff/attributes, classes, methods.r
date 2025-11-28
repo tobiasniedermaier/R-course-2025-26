@@ -67,10 +67,12 @@ class(dat) <- NULL #lösche alle Klassen-Attribute. dat ist jetzt nur noch eine 
 class(dat) <- old_dat_classes[3] #weise nur das 3. (=data.frame) Attribut wieder zu
 dat
 gdata::is.what(dat) #"is.data.frame" "is.list"       "is.object"     "is.recursive"
+#Easier, but same results:
+dat <- mslee
+class(dat) <- "data.frame" #This simply overwrites the three classes "tbl_df", "tbl", and "data.frame" with only "data.frame", i.e. practically removes the other two classes.
 
 
-
-#from R Advanced:
+#From R Advanced:
 
 ####################
 # R6 classes in R: #
@@ -114,4 +116,5 @@ x$
 	sum
 #0
 #(="method chaning")
+
 
