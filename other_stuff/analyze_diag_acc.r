@@ -11,10 +11,10 @@ analyze_diag_acc <- function(data, outcome, marker, cutoff, n=3){
  n_outcome_marker <- sum(data[,outcome] & !is.na(data[,marker] & !is.na(data[,outcome])), na.rm=T)
  n_no_outcome_marker <- sum(data[,outcome]==0 & !is.na(data[,marker] & !is.na(data[,outcome])), na.rm=T)
  
- TP <- sum(data[,outcome] & !is.na(data[,marker]) & data[,marker]>cutoff, na.rm=T)
- FN <- sum(data[,outcome] & !is.na(data[,marker]) & data[,marker]<=cutoff, na.rm=T)
- FP <- sum(data[,outcome]==0 & !is.na(data[,marker]) & (data[,marker]>cutoff), na.rm=T)
- TN <- sum(data[,outcome]==0 & !is.na(data[,marker]) & (data[,marker]<=cutoff), na.rm=T)
+ TP <- sum(data[,outcome] & !is.na(data[,marker]) & data[,marker] > cutoff, na.rm=T)
+ FN <- sum(data[,outcome] & !is.na(data[,marker]) & data[,marker] <= cutoff, na.rm=T)
+ FP <- sum(data[,outcome]==0 & !is.na(data[,marker]) & (data[,marker] > cutoff), na.rm=T)
+ TN <- sum(data[,outcome]==0 & !is.na(data[,marker]) & (data[,marker] <= cutoff), na.rm=T)
  
  #2.) Sensitivity:
  Se_marker <- binom(TP, (TP+FN), n=n)[1]
