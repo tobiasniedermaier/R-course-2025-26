@@ -97,10 +97,10 @@ data(AuditC)
 (data <- list(dat1, dat2))
 lapply(data, reitsma)
 summary_reitsma <- function(x, ...){summary(reitsma(x, ...))}
-(x <- lapply(data, summary_reitsma)) #oder: for (i in 1:2) {x[[i]] <- summary_reitsma(data[i])} #oder: for (i in 1:2) {x[[i]] <- summary(reitsma(data[i]))}
+(x <- lapply(data, summary_reitsma)) #or: for (i in 1:2) {x[[i]] <- summary_reitsma(data[i])} #or: for (i in 1:2) {x[[i]] <- summary(reitsma(data[i]))}
 
 #Filter the numeric variables:
-dat <- read.csv2("D:\\Daten Samsung Notebook\\Statistik\\R üben\\R Kurs LMU\\TeachingRatings.csv", header=T, sep=",")
+dat <- read.csv2("C:\\path\\to\\your\\file\\TeachingRatings.csv", header=T, sep=",")
 #1.
 nums <- sapply(dat, is.numeric)
 dat[,nums]
@@ -113,3 +113,4 @@ numerics <- Filter(is.numeric, dat)
 sapply(numerics, mean) #Or slightly better because it returns a data.frame as output (otherwise identical):
 Kmisc::dapply(numerics, mean)
 as.data.frame(sapply(numerics, mean))
+
