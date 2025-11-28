@@ -39,8 +39,8 @@ test3(data=iris, mpgvar="Species") #Uninformative error
 mpg_to_lp100km <- function(data=NULL, mpgvar=NULL, plausib_bound=10){
  if(is.null(data)) stop("No data set provided!")
  if(!is.numeric(data[,mpgvar])) stop("Variable needs to be numeric!")
- if(min(data[,mpgvar]) <plausib_bound){
-  print(data[data[,mpgvar] <plausib_bound,])
+ if(min(data[,mpgvar]) < plausib_bound){
+  print(data[data[,mpgvar] < plausib_bound,])
   warning("At least one observation has an unrealistically high fuel consumption.\nInstead of liters per 100km, the implausible obervations are returned.\nPlease check your input data and/or exclude those observations..")
   } 
  kmpg <- data[,mpgvar] * 1.6 #km per gallon
@@ -54,3 +54,4 @@ mpg_to_lp100km(data=dat, mpgvar="mpg", plausib_bound=15) #Warning
 mpg_to_lp100km(data=dat, mpgvar="mpg", plausib_bound=10) #No warning
 x <- mpg_to_lp100km(data=dat, mpgvar="mpg", plausib_bound=15) #Warning, but it still performs the calculation and one can work with it like normal.
 mpg_to_lp100km(data=iris, mpgvar="Species") #Informative error
+
