@@ -1,0 +1,60 @@
+# This is a collection of various tips and tricks in R programming and its application in epidemiology that I learned over the years. 
+# Not all of them are crucial skills, but some of them might make your life easier.
+
+# 1) Speeding up R code:
+# R is not a particularly fast language. But there are some easy ways to speed it up. Some examples:
+
+#a)
+system.time({
+    v <- c()
+    for (i in 1:100000) {
+        v <- c(v, i)   # WORST POSSIBLE PRACTICE
+    }
+})
+#Takes 11 seconds on my laptop from 2019.
+
+#b)
+system.time({
+    v <- c()                    # no preallocation
+    for (i in 1:1000000) {       # slow enough to see the effect
+        v[i] <- paste0(i)
+    }
+}) #Takes around 8-9 seconds on my laptop from 2019. But note that we did 10^6 iterations here, whereas we had only 10^5 in the previous example. So a) is slower by a factor of 10 compared to b)!
+
+#c)
+system.time({
+    v <- vector("character", length=1000000)  # now with preallocation
+    for (i in 1:1000000) { 
+        v[i] <- paste0(i)
+    }
+}) 
+#Takes around 4-5 seconds on my laptop from 2019. So around twice as fast as b).
+
+#d)
+system.time({
+    v <- vector("numeric", length=1000000)  # now with preallocation and the correct vector type
+    v <- 1:1000000
+}) 
+#Works basically instantly. Even with 100000000 iterations (100 times more), it only takes 0.2 seconds.
+
+#### Another example of vectorized functions:
+library(microbenchmark)
+
+x <- runif(5e5, 0.9, 1.1)
+
+microbenchmark(
+    manual = {
+        res <- numeric(length(x))
+        res[1] <- x[1]
+        for (i in 2:length(x)) res[i] <- res[i-1] * x[i]
+    },
+    cumprod = {
+        res <- cumprod(x)
+    },
+    times = 5
+)
+#Similarly, the function cumsum() is also optimized for speed.
+#NEVER write a loop if you can use a vectorized function instead.
+#"+", "-", "*", "/" are all vectorized. Use 1:10 + 10:19 instead of some nested for-loop.
+
+#To be continued/added: parallelization.
