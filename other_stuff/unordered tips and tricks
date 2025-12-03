@@ -57,4 +57,4 @@ microbenchmark(
 #NEVER write a loop if you can use a vectorized function instead.
 #"+", "-", "*", "/" are all vectorized. Use 1:10 + 10:19 instead of some nested for-loop.
 
-#To be continued/added: parallelization.
+#To be continued.
