@@ -1,0 +1,124 @@
+
+# Exercise 3:
+
+## Task 1
+
+#1. Load the data set Orange that contains only three variables.
+dat <- Orange #already included in R
+
+# Define colors for each tree group
+tree_colors <- as.numeric(Orange$Tree)
+palette_colors <- rainbow(length(unique(Orange$Tree)))
+palette_colors #Or:
+Orange$Tree |> unique() |> length() |> rainbow()
+
+#2. Plot the two variables age and circumference against each other using a scatter plot
+#3. Add color as an additional aesthetic mapping for the variable Tree.
+
+# Create plot
+plot(Orange$age, Orange$circumference,
+     col = palette_colors[tree_colors],
+     pch = 16,
+     xlab = "Age",
+     ylab = "Circumference",
+     main = "Orange Tree Growth")
+
+# Add legend
+legend("topleft", legend = levels(Orange$Tree),
+     col = palette_colors, pch = 16, title = "Tree")
+
+
+#Or with ggplot2:
+library(ggplot2) #If you want to make sure that a package is loaded if installed, or installed and then loaded if it was not yet installed, use the following codes:
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+library(ggplot2)
+ggplot(Orange, aes(age, circumference, color = Tree)) + geom_point()
+
+
+## Exercise 3, Task 2:
+
+#1. Now plot them as lines and not as points using geom_line
+ggplot(Orange, aes(age, circumference, color = Tree)) + geom_line()
+
+ggplot(Orange, aes(age, circumference, color = Tree)) + geom_line() + theme_bw()
+ggplot(Orange, aes(age, circumference, color = Tree)) + geom_line() + theme_minimal()
+ggplot(Orange, aes(age, circumference, color = Tree)) + geom_line() + theme_classic()
+
+ggplot(Orange, aes(age, circumference, color = Tree)) +
+  geom_point()
+
+#2. Generate 2 objects: One plot using points and one using lines. Plot the two objects in one plot
+if (!requireNamespace("cowplot", quietly = TRUE)) install.packages("cowplot")
+library(cowplot)
+g1 <- ggplot(Orange, aes(age, circumference, color = Tree))+
+  geom_point()
+g2 <- ggplot(Orange, aes(age, circumference, color = Tree))+
+  geom_line()
+
+plot_grid(g1,g2)
+
+#3. Add another layer to your plot: + facet_wrap(~Tree). What does the function do?
+ggplot(Orange, aes(age, circumference, color = Tree))+
+  geom_point()+
+  geom_line()+
+  facet_wrap(~Tree)
+  
+layout(matrix(1:6, nrow=2, byrow=TRUE))
+layout.show(n=6) #See how (in which order) the matrix grid will be filled with plots.
+plot(Orange[Orange$Tree==1,]$circumference, main="1", type="b", ylim=c(0,250))
+plot(Orange[Orange$Tree==2,]$circumference, main="2", type="b", ylim=c(0,250))
+plot(Orange[Orange$Tree==3,]$circumference, main="3", type="b", ylim=c(0,250))
+plot(Orange[Orange$Tree==4,]$circumference, main="4", type="b", ylim=c(0,250))
+plot(Orange[Orange$Tree==5,]$circumference, main="5", type="b", ylim=c(0,250))
+dev.off()
+
+layout(matrix(1:6, nrow=2, byrow=TRUE))
+for(i in 1:5){
+  plot(Orange[Orange$Tree==i,]$circumference, main=i, type="b", ylim=c(0,250))
+}
+
+
+## Exercise 3, Task 3:
+
+library(datasets)
+#1. In this task we use the data set ChickWeight. Load the data set from the package datasets.
+data(ChickWeight)
+dat <- ChickWeight
+
+#2. Plot the distribution of the variable weight using a histogram.
+hist(dat$weight, main="Histogram for weight", xlab="Weight in ...[unit]")
+
+#3. Change the data type of the variable Time to a factor.
+dat$Time <- factor(dat$Time)
+
+#4. Plot a boxplot for each time point.
+boxplot(dat$weight ~ dat$Time)
+
+#5. Plot the weight as boxplots for the different types of Diet.
+boxplot(dat$weight ~ dat$Diet)
+
+#6. Do the same, as before, but now combine the three variables: Use Time on the x-axis, weight on the y-axis and use Diet as a fill argument.
+cols <- c("skyblue", "tomato", "palegreen3", "gold")  # eine Farbe je Diet
+boxplot(weight ~ Time * Diet, data = dat, col = rep(cols, times = nlevels(dat$Time)), xlab = "Time", ylab = "Weight", las = 2)
+legend("topleft", title = "Diet", fill = cols, legend = levels(dat$Diet), bty = "n")
+
+#Or with ggplot2:
+ggplot(dat, aes(Time, weight, fill = Diet)) + geom_boxplot()
+
+#Add color as an additional aesthetic mapping for the variable Tree:
+ggplot(Orange, aes(age, circumference, color = Tree)) + geom_point()
+
+#Or with lattice:
+library(lattice)
+
+xyplot(circumference ~ age,
+       data   = Orange,
+       groups = Tree,                  # colors according to tree
+       pch    = 16,                    # "full" dots
+       cex    = 0.8,
+       auto.key = list(points = TRUE,  # automatically create legend
+                       lines  = FALSE, #TRUE would create a line plot. Not useful here.
+                       title  = "Tree",
+                       space  = "right"), #Or: "left", "top", "bottom". Ginge auch mit Koordinaten.
+       xlab = "Age",
+       ylab = "Circumference")
