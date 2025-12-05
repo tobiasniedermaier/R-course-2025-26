@@ -1,0 +1,297 @@
+
+# Exercise 4:
+
+# Today we will start to analyze the NHANES data from your R Data Project. Choose one sub-sample to work with. There are 5 data sets. You may also want to look at the documentation of the data.
+
+## Task 1 (General):
+
+#1. Load the data in R.
+setwd("S:\\AG_Holle\\TN\\3_Lehre\\R-Kurs 2025_26")
+dat <- read.csv2("NHANES1.csv") #Or interactively: read.csv2(file.choose())
+
+#2. What is the dimension of the data set? How many rows (samples), and how many columns (variables) does the data set contain? What are the variable names of the data set?
+dim(dat)
+nrow(dat)
+ncol(dat)
+colnames(dat) #Or: names(dat)
+
+#3. All the variables in the data set are either of a class integer, numeric or boolean (i.e., logical). However, some of the variables should be factors rather than numerical variables. Change the class of these variables to factor.
+lapply(head(dat), table) #Or:
+str(dat)
+
+dat$srhgnrl <- as.factor(dat$srhgnrl)
+dat$srphbad_prv30d <- as.factor(dat$srphbad_prv30d)
+dat$srmhbad_prv30d <- as.factor(dat$srmhbad_prv30d)
+dat$adlimp_prv30d <- as.factor(dat$adlimp_prv30d)
+dat$educ <- as.factor(dat$educ)
+dat$martlst <- as.factor(dat$martlst)
+dat$ethnic <- as.factor(dat$ethnic)
+dat$increl <- as.factor(dat$increl)
+dat$diab_lft <- as.factor(dat$diab_lft)
+dat$jobstat_lwk <- as.factor(dat$jobstat_lwk)
+dat$alc_lft <- as.factor(dat$alc_lft)
+dat$smokstat <- as.factor(dat$smokstat)
+dat$milk_month <- as.factor(dat$milk_month)
+
+#Or:
+library(Hmisc)
+vars <- Cs(hivpos, srhgnrl, srphbad_prv30d, srmhbad_prv30d, adlimp_prv30d, educ, martlst, male, ethnic, increl, asthma_ever, asthma_now, ovrwght_ever, arthrit_ever, stroke_ever, livdis_ever, cbronch_now, livdis_now, cancer_ever, rel_heartdis, rel_asthma, rel_diab, heartdis_ever, lungpath_ever, diab_lft, jobstat_lwk, wrkt_irreg, workpollut, sleep_probl, cannab_ever, harddrg_ever, smokstat, age.cat, smoke_bin, bmi_cat, age_bin)
+
+summary(dat[,vars])
+
+dat[,vars] <- lapply(dat[,vars], as.factor)
+
+#4. How many women and how many men are there in your data set?
+table(dat$male, exclude=NULL)
+#Achtung: male ist genau verkehrt herum definiert! Richtig herum labeln:
+dat$sex <- factor(dat$male, levels=c(FALSE,TRUE), labels=c("female","male"))
+
+#5. What is the mean BMI in the overall population? What is the mean BMI for men and women?
+mean(dat$bmi, na.rm=TRUE)
+tapply(dat$bmi, dat$sex, mean, na.rm=T)
+aggregate(bmi ~ sex, data=dat, FUN=mean)
+mean(dat[dat$sex=="male",]$bmi, na.rm=TRUE)
+mean(dat[dat$sex=="female",]$bmi, na.rm=TRUE)
+
+#6. Who has an higher mercury level in blood: men or women? People with chronic bronchitis or people without it? ‘Hispanic’, ‘White’, ‘Black’ or ‘Other/Mixed’ people?
+tapply(dat$hg, dat$sex, summary, na.rm=T)
+tapply(dat$hg, dat$cbronch_now, summary, na.rm=T)
+tapply(dat$hg, dat$ethnic, summary, na.rm=T)
+tapply(dat$hg, dat$ethnic, mean, na.rm=T)
+
+t.test(hg ~ sex, data=dat)
+t.test(hg ~ cbronch_now, data=dat)
+kruskal.test(hg ~ ethnic, data=dat) #or:
+oneway.test(hg ~ ethnic, data=dat)
+
+#Or:
+mean(dat$hg[dat$sex=="male"], na.rm=T) #etc.
+
+#7. Use the function summary to get the summarized information on all the variables in the data set.
+summary(dat)
+
+## Exercise 4, Task 2 (Visualization):
+
+#1. Plot the variable rr_sys as a function of bmi.
+plot(dat$bmi, dat$rr_sys)
+
+#2. Now we want to plot the variable rr_sys against diab_lft. Which plot should we use here?
+boxplot(dat$rr_sys ~ dat$diab_lft)
+is.factor(dat$diab_lft) #TRUE
+dat$diab_lft <- factor(dat$diab_lft, levels = c(0,1,2), labels = c("None","Prediabetes","Diabetes"))
+boxplot(dat$rr_sys ~ dat$diab_lft)
+boxplot(rr_sys ~ diab_lft, data=dat)
+
+ggplot(dat, aes(diab_lft, rr_sys))+
+  geom_boxplot()
+
+#3. Plot the BMI against educ and give a short interpretation.
+boxplot(dat$bmi ~ dat$educ)
+
+ggplot(dat, aes(educ, bmi))+
+  geom_boxplot()
+dev.off()
+
+#4. Plot the histogram of the high-density lipoprotein (HDL) cholesterol levels. How does the distribution of HDL look like?
+hist(dat$hdl, breaks=50)
+ggplot(dat, aes(hdl)) + geom_histogram(bins=50)
+
+#5. Can you convert the variable HDL so that its distribution looks more normal? Create such a variable and add it to your data set.
+hist(log(dat$hdl), breaks=15)
+dat$log_hdl <- log(dat$hdl)
+hist(dat$log_hdl, breaks=15)
+
+## Exercise 4, Task 3 (Confidence intervals):
+
+#1. Is the variable height normally distributed in males and females? Check this by analyzing graphically the two sub-samples. Use qqplots: qqnorm() and qqline().
+hist(dat[dat$sex=="female",]$height, xlab="Height in cm", main="Females")
+hist(dat[dat$sex=="male",]$height, xlab="Height in cm", main="Males")
+
+qqnorm(dat[dat$sex=="female",]$height)
+qqline(dat[dat$sex=="female",]$height)
+
+qqnorm(dat[dat$sex=="male",]$height)
+qqline(dat[dat$sex=="male",]$height)
+
+#2. Suppose that the value of the variance for the male height is known and equal to 64. Construct a 95% confidence interval for the mean.
+mean(dat[dat$sex=="male",]$height, na.rm=T)
+mean(dat[dat$sex=="male",]$height, na.rm=T) -1.96*(sqrt(64) / sqrt(sum(!is.na(dat$height[dat$sex=="male"]))))
+mean(dat[dat$sex=="male",]$height, na.rm=T) +1.96*(sqrt(64) / sqrt(sum(!is.na(dat$height[dat$sex=="male"]))))
+#KI ist so eng, weil 5000 Leute im Datensatz sind.
+
+#3. Repeat the procedure for the female population, with unknown variance and using a confidence level of 95%.
+mean(dat[dat$sex=="female",]$height, na.rm=T)
+low <- mean(dat$height[dat$sex=="female"],na.rm=T) - qnorm(0.975)*sqrt(64/(length(dat$height[dat$sex])-sum(is.na(dat$height[dat$sex]))))
+up <- mean(dat$height[dat$sex=="female"],na.rm=T) + qnorm(0.975)*sqrt(64/(length(dat$height[dat$sex])-sum(is.na(dat$height[dat$sex]))))
+c(low,up)
+#KI ist so eng, weil 5000 Leute im Datensatz sind.
+#In fact, because we aassume unknown variance, the following would be more adequate (and is easier):
+t.test(dat$height[dat$sex == "female"], conf.level = 0.95)$conf.int
+
+#Repeat the procedure for the female population, with unknown variance and using a confidence level of 90%
+females <- dat[dat$sex=="female",]
+males <- dat[dat$sex=="male",]
+
+DescTools::MeanCI(x=females$height, conf.level=0.90, sides="two.sided", na.rm=T)
+DescTools::MeanCI(x=males$height, conf.level=0.90, sides="two.sided", na.rm=T)
+
+
+## Exercise 4, Task 4 (Tests):
+
+#4.1 Is the variance the same in both populations? Perform an appropriate test. What is the null hypothesis?
+var.test(females$height, males$height)
+
+#4.2 Which test can we use, if, instead, we want to check if males are on average taller than females? Set an adequate alternative hypothesis.
+t.test(dat[dat$sex=="male",]$height, dat[dat$sex=="female",]$height, alternative='greater') #or:
+t.test(height ~ sex, data=dat, alternative='less')
+
+#4.3 Analyze the confidence interval obtained in the previous point.
+ci <- t.test(dat$height[dat$sex == "male"], dat$height[dat$sex == "female"], alternative = "greater")
+ci$conf.int
+#Why doesn't it have an upper bound?
+#-> Obere Grenze fehlt bei einseitigem KI per Definition.
+
+#4.4 Now look at the distribution of the variable weight: can we graphically state its normality? Perform a transformation in order to recover it.
+hist(dat$weight, breaks=50)
+qqnorm(dat$weight)
+qqline(dat$weight)
+
+hist(log(dat$weight), breaks=50)
+qqnorm(log(dat$weight))
+qqline(log(dat$weight))
+
+#4.5 Test if the mean of the variable weight is 80 kg, testing H0: log(weight) = log(80) vs. H1: log(weight) != log(80). Can you state an interval estimate with a level of 0.99?
+
+t.test(log(dat$weight), mu=log(80), alternative="two.sided")
+#Can you state an interval estimate with a level of 0.99?
+t.test(log(dat$weight), mu=log(80), alternative="two.sided", conf.level=0.99)
+
+#4.6 Provide a punctual and an interval estimate for the prevalence of heart diseases and lung pathology.
+
+# HEART DISEASE
+y_hd <- factor(dat$heartdis_ever, levels = c(FALSE, TRUE), labels = c("no","yes"))
+tab_hd <- table(y_hd)
+prop.test(x = unname(tab_hd["yes"]), n = sum(tab_hd))
+# optional:
+binom.test(unname(tab_hd["yes"]), sum(tab_hd))
+
+# LUNG PATHOLOGY
+y_lp <- factor(dat$lungpath_ever, levels = c(FALSE, TRUE), labels = c("no","yes"))
+tab_lp <- table(y_lp)
+prop.test(x = unname(tab_lp["yes"]), n = sum(tab_lp))
+x <- unname(tab_lp["yes"])
+n <- sum(tab_lp)
+
+#Oder: (Einfacher, kein Paket nötig + gibt auch p-Werte aus.)
+binom.test(x, n)
+
+#4.7 Test if the prevalence [of heartdis_ever] is statistically different between men and women
+table(dat[,c("heartdis_ever","sex")])
+chisq.test(table(dat[,c("heartdis_ever","sex")]))
+fisher.test(table(dat[,c("heartdis_ever","sex")]))
+prop.test(table(dat[,c("heartdis_ever","sex")]))
+prop.test(table(dat[,c("sex","heartdis_ever")]))
+#Ergibt alles dieselben p-Werte.
+prop.test(table(dat$sex, dat$heartdis_ever)) #alternative Syntax.
+
+#4.8 Turn the variable smokstat into a binary variable (put the non-smokers and the people who almost never smoked into one group).
+dat$smokebin <- ifelse(dat$smokstat %in% 1:2, 0, 1)
+dat[is.na(dat$smokstat),"smokebin"] <- NA
+table(dat$smokebin, exclude=NULL)
+dat$smokebin <- as.factor(dat$smokebin)
+#Just to demonstrate how to dichotomize a continuous variable. The variable smoke_bin already exists in the data set and is (effectively) identical to smokebin!
+
+#4.9 Do you expect smokers to have a higher cancer prevalence than non-smokers? Test if there is a significant difference in cancer prevalence between smokers and non-smokers (using the variable from before). If so, which group has a higher prevalence? Did you get the result you expected?
+prop.table(table(dat[,c("cancer_ever","smokebin")]), margin=2)
+dat$cancer_ever <- factor(dat$cancer_ever, levels=c(TRUE, FALSE))
+prop.test(table(dat$smoke_bin, dat$cancer_ever)) #Ist aus irgendeinem Grund "verdreht", d.h. Prävalenz vermeintlich 86.3% vs. 94.1% und nicht 13.7% und 5.9%. Keine Ahnung, warum.
+#-> Strangely, the cancer prevalence is higher among non-smokers than among smokers. Possible explanations:
+#1.) Confounding by age!
+#2.) Competing risks: A smoker who dies early from CVD cannot get cancer anymore.
+#3.) Accelerated cancer death: Smoking is an adverse factor regarding prognosis. Given that both a smoker and a non-smoker get the same cancer, the smoker is expected to die faster. Thus, there are fewer prevalent cancer cases. Incidence would be a better measure than prevalence.
+#4.) "Cancer" is very heterogeneous. Some develop slowly and are not very deadly (e.g. most skin cancer types or thyroid cancer), others develop very fast and kill fast (e.g. lung cancer, esp. small-cell lung cancer). Maybe the types of cancers among the smokers tend to be more of the fast-developing and deadly type.
+
+#4.10 Do the same test in the subgroup of people who are between 20 and 49 years old. What do you see now? How can you explain the results?
+
+prop.test(table(dat[dat$age<50,]$smoke_bin, dat[dat$age<50,]$cancer_ever))
+#Note: Instead of dat[dat$age<50,]$age, one could also write dat$age[dat$age<50]. Slightly shorter and less error prone, because you don't need the comma at the end.
+#Or:
+subset(dat, age<50)
+#Or:
+library(data.table)
+dt <- data.table(dat)
+dt[age<50]
+
+## Exercise 4, Task 5 (Discrete and non-parametric tests):
+
+#5.1 Use a chi-square test in order to test whether the presence of chronic bronchitis and the current smoking status are independent.
+tab_smo_bron <-  table(dat[,c("smokstat","cbronch_now")])
+chisq.test(tab_smo_bron)
+
+#5.2 Use a Fisher test to verify the independence between sex and the presence of any kind of liver disease.
+fisher.test(table(dat[,c("sex","livdis_now")])) #or:
+fisher.test(dat$sex, dat$livdis_now)
+
+#5.3 Perform a sign test both on hdl and on log-hdl to test the hypothesis that the median of the cholesterol level is 1.30. Is the median significantly different from 1.30? Do you obtain the same results using hdl and logHdl?
+
+library(BSDA)
+SIGN.test(dat$hdl, md = 1.30)
+SIGN.test(log(dat$hdl), md = log(1.30))
+
+#5.4 Use a Mann-Whitney test to test the null hypothesis 𝐻0 ∶ 𝑚𝑎𝑙𝑒𝑤𝑒𝑖𝑔ℎ𝑡 = 𝑓𝑒𝑚𝑎𝑙𝑒𝑤𝑒𝑖𝑔ℎ𝑡.
+wilcox.test(weight ~ sex, data=dat) #or:
+coin::wilcox_test(weight ~ as.factor(sex), data = dat) #or:
+library(coin)
+wilcox_test(weight ~ as.factor(sex), data = dat)
+
+#5.5 It has been shown that there is a ‘social gradient’ in health such that the richer you are, the more likely you are to have better health. Plot general self-rated health against relative income so that you can get an impression whether this is confirmed by our data. Which kind of plot is reasonable? Consider using a mosaic plot. E.g. function mosaicplot().
+
+mosaicplot(srhgnrl ~ increl, main = 'self-rated health vs. relative income', xlab = 'self-rated health', ylab = 'relative income', data = dat) #or probably nicer / easier to grasp the message:
+plot(dat[,c("increl","srhgnrl")])
+dev.off()
+
+#5.6 Test the relation for statistical significance using an appropriate test.
+chisq.test(dat$srhgnrl, dat$increl) #Both variables are categorical (nominal), so we cannot use t.test or other tests that assume metric or ordinal data.
+
+#5.7 Categorize the variable bmi into an underweight (BMI<18.5), normal weight (18.5 <= BMI < 25), overweight (25 <= BMI < 30) and obese (BMI >= 30) group. Turn the variable into a factor. You may use the function cut().
+
+#5.8 What is the proportion of overweight or obese people according to the categorized BMI? What is the proportion of people ever diagnosed with being overweight (variable ovrwght_ever)? How many overweight people were actually ever diagnosed with being overweight?
+prop.table(table(dat$bmi_cat))
+
+bmi_cat <- NULL
+bmi_cat[dat$bmi<18.5] <- "Underweight"
+bmi_cat[dat$bmi>=18.5&dat$bmi<25] <- "Normal weight"
+bmi_cat[dat$bmi>=25&dat$bmi<30] <- "Overweight"
+bmi_cat[dat$bmi>=30] <- "Obese"
+bmi_cat <- as.factor(bmi_cat)
+dat$bmi_cat <- bmi_cat
+prop.table(table(dat$ovrwght_ever))
+
+#Or:
+dat$bmi_cat2 <- ifelse(dat$bmi <18.5, "Underweight", 
+  ifelse(dat$bmi >=18.5 & dat$bmi <25, "Normal weight",
+  ifelse(dat$bmi >=25 & dat$bmi <30, "Overweight",
+  "Obese")))
+table(dat$bmi_cat, dat$bmi_cat2) #identical
+
+#Or:
+dat$bmi_cat3 <- cut(dat$bmi, breaks=c(0, 18.5, 25, 30, 100), right=FALSE)
+table(dat$bmi_cat, dat$bmi_cat3) #identical
+
+#How many overweight people were actually ever diagnosed with being overweight?
+prop.table(table(dat[dat$bmi_cat2=="Overweight",]$ovrwght_ever)) #Or:
+prop.table(table(dat$ovrwght_ever, dat$bmi_cat), margin = 2)
+
+#5.9 Is there a difference in diabetes prevalence between obese people diagnosed with overweight and those who were never diagnosed? What about self-rated health? How do you explain the results?
+
+obese <- dat[dat$bmi_cat=="Obese",]
+tapply(obese$diab_lft, obese$ovrwght_ever, summary)
+tapply(obese$diab_lft, obese$ovrwght_ever, function(x) (table(x)))
+tapply(obese$diab_lft, obese$ovrwght_ever, function(x) prop.table(table(x)))
+mytab <- table(obese[,c("diab_lft","ovrwght_ever")])
+fisher.test(mytab)
+
+#Self-rated health:
+mytab <- table(obese[,c("srhgnrl","ovrwght_ever")])
+prop.table(mytab, margin=1)
+chisq.test(mytab)
