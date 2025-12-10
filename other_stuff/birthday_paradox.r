@@ -1,10 +1,10 @@
 
 library(future.apply)
 library(parallel)
-plan(multisession, workers = parallel::detectCores())
+plan(multisession, workers = max(1L, parallel::detectCores() - 1L))
 
-prob_dup_bday_pll <- function(repl=1000000, n=2){
- gen_days <- function(n){floor(runif(n, 0, 364))}
+prob_dup_bday_pll <- function(repl=10000, n=2){
+ gen_days <- function(n){sample.int(365, n, replace = TRUE)}
  dup_bday <- function(n){any(duplicated(gen_days(n)))}
  res <- 100*prop.table(table(future_replicate(n=repl, expr=dup_bday(n))))[2]
  return(res)
