@@ -1,0 +1,9 @@
+I uploaded a zip file containing a virtual machine (Debian 13) with R, R Markdown and LaTeX preinstalled (Debian 13+R+markdown+tinytex.7z).
+It contains everything you need to run analyses and compile Rmd files to pdf.
+You can find (and download) it here: https://www.swisstransfer.com/d/61cc9943-a0b4-4f6a-bb0f-90d2e5b99cad
+Pros: relatively small size, low hardware requirements, "no frills", you will learn a bit how to work with the console in linux.
+Drawback: It is not userfriendly at all.
+
+So I did the same again in a virtual machine based on Lubuntu 24.03.3.
+Pros: Much easier to use.
+Cons: Considerably larger, thus more RAM and storage required (and a faster CPU), takes longer to boot.
