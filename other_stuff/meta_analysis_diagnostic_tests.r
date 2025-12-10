@@ -59,7 +59,7 @@ summary(fit1)     # results of the bivariate meta-analysis
 ###
 
 attach(LAG)
-dta1 <- edta(TP,FN,TN,FP) #same as edta(LAG$TP, LAG$FN, LAG$TN, LAG$FP)
+dta1 <- edta(TP, FN, TN, FP) #same as edta(LAG$TP, LAG$FN, LAG$TN, LAG$FP)
 detach(LAG)
 
 ###
@@ -67,4 +67,5 @@ detach(LAG)
 attach(dta1)
 bifunnel(y,S) #same as bifunnel(dta1$y, dta1$S)
 detach(dta1)
+
 
