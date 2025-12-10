@@ -23,17 +23,17 @@ f_min_5(8) #3
 f(2)(3) #5 ("currying")
 
 #Another level of "currying":
-f <- function(a){
+g <- function(a){
   function(b){
     function(c)
       a+b+c
    }
   }
-f(2)(3)(4)
-g <- f(2)
-g(3)(4)
-h <- g(3)
-h(4)
+g(2)(3)(4)
+h <- g(2)
+h(3)(4)
+i <- h(3)
+i(4)
 
 #to be continued, s. http://www.grappa.univ-lille3.fr/~staworko/teaching/r18/01.r.pdf
 
@@ -59,8 +59,8 @@ Reduce(rbind, l)
 do.call(rbind, l)
 
 #We may even define a function fapply() that applies all functions of a list to the same set of arguments
-fapply <- function(X, FUN, ...){
-  lapply(FUN, function(f, ...){f(...)}, X, ...)
+fapply <- function(X, FUN, ...) {
+  lapply(FUN, function(f) f(X, ...))
 }
 
 basic_stat <- list(mean = mean, median = median, sd = sd)
@@ -145,7 +145,7 @@ res <- sapply(100:200, is.prime) * 100:200
 res <- res[res>0] #If someone doesn't want to use c() or Filter() for whatever reason.
 
 #Exercise 6:
-words <- read.table("D:\\Daten Samsung Notebook\\Statistik\\R üben\\wordsEn.txt")
+words <- read.table("wordsEn.txt", stringsAsFactors = FALSE)
 #a. Using a function that checks if a given words contains any vowels:
 containsVowel <- function(x) grepl("a|o|e|i|u", x)
 #find all words that do not contain any vowels.
@@ -250,5 +250,6 @@ lm(xyform(mpg,c("cyl","hp","wt")), data=mtcars)
 
 library(Hmisc) #So that we also don't need quotation marks for the x-variables anymore:
 lm(xyform(mpg, Cs(cyl,hp,wt)), data=mtcars)
+
 
 
