@@ -47,14 +47,14 @@ gdata::is.what(x) #is.list, is.recursive u.a.
 lapply(x, function(x){2*x}) #Identical: 
 mapply(function(x){2*x}, x)
 
-#rapply:
+#rapply: (Recursively applies a function to all elements of a list. Most useful application: a "ragged" array, i.e. a list which contains elements of different length.)
 rapply(x, print)
 rapply(x, sum) #Identical: mapply(sum, x)
 rapply(x, length) #identical: mapply(length, x) #Or: unlist(lapply(x, length)) #or: sapply(x, length)
 rapply(x, function(x){2*x})
 
 #More useful examples (s. http://theautomatic.net/2018/11/13/those-other-apply-functions/):
-lapply(iris, mean) #NA bei nicht-numerischer Variable + warning (works nonetheless)
+lapply(iris, mean) #NA if applied to non-numeric variables + warning (works nonetheless)
 sapply(iris[sapply(iris, is.numeric)], mean) #how to solve it without rapply
 rapply(iris, mean, class = "numeric") #elegant rapply solution
 
@@ -70,18 +70,25 @@ by(textbooks$diff, textbooks$more, summary)
 #entspricht:
 tapply(textbooks$diff, textbooks$more, summary)
 
-#- aggregate function:
-#aggregate(x, by, fun), input DF, output DF. Bsp.:
+## aggregate function ----:
+
+#aggregate(x, group, data, function).
+#Input DF, output DF. Examples:
 aggregate(mpg ~ cyl, data=mtcars, FUN=summary)
+		  
 #Same, but not as nice:
 aggregate(mtcars$mpg ~ mtcars$cyl, FUN=summary)
+		  
 #And a third way of achieving the same:
 aggregate(mtcars$mpg, by=list(mtcars$cyl), FUN=summary)
+		  
 #Alternatively a variant with tapply:
 tapply(mtcars$mpg, mtcars$cyl, summary)
+		  
 #Another one with split and lapply:
 (mysplit <- split(mtcars$mpg, mtcars$cyl))
 lapply(mysplit, summary)
+		  
 #aggregate has the advantage of returning a data.frame and not a list like tapply. And one can do more complex things (stratified analyses) slightly easier than with tapply. Example: Get the mean MPG for Transmission grouped by Cylinder:
 aggregate(mpg ~ am + cyl, data=mtcars, mean)
 
@@ -89,15 +96,24 @@ aggregate(mpg ~ am + cyl, data=mtcars, mean)
 tapply(mtcars$mpg, list(mtcars$am, mtcars$cyl), FUN=mean)
 aggregate(mpg ~ am + cyl, data=mtcars, mean)
 
+		  
 #How can I loop through a list of strings as variables in a model?
+
 library(mada)
 data(AuditC)
 (dat1 <- AuditC[1:7,])
 (dat2 <- AuditC[8:14,])
-(data <- list(dat1, dat2))
-lapply(data, reitsma)
+(data_list <- list(dat1, dat2))
+lapply(data_list, reitsma)
 summary_reitsma <- function(x, ...){summary(reitsma(x, ...))}
-(x <- lapply(data, summary_reitsma)) #or: for (i in 1:2) {x[[i]] <- summary_reitsma(data[i])} #or: for (i in 1:2) {x[[i]] <- summary(reitsma(data[i]))}
+(x <- lapply(data_list, summary_reitsma)) #or: 
+for (i in 1:2) {
+	x[[i]] <- summary_reitsma(data_list[i])
+} #or: 
+
+for (i in 1:2) {
+	x[[i]] <- summary(reitsma(data_list[i]))
+}
 
 #Filter the numeric variables:
 dat <- read.csv2("C:\\path\\to\\your\\file\\TeachingRatings.csv", header=T, sep=",")
@@ -112,3 +128,4 @@ numerics <- Filter(is.numeric, dat)
 #Apply a function to them:
 sapply(numerics, mean)
 as.data.frame(sapply(numerics, mean))
+
