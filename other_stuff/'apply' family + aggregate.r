@@ -33,7 +33,7 @@ dimnames(x)[[1]] <- letters[1:8]
 #Example: 
 l <- list(a = 1:10, b = 11:20) #"the mean of the values in each element"
 #Complicated way: 
-mean(as.numeric(l[[1]])) #und
+mean(as.numeric(l[[1]])) #and
 mean(as.numeric(l[[2]]))
 #Better way with lapply: 
 lapply(l, mean)
@@ -50,7 +50,7 @@ mapply(function(x){2*x}, x)
 #rapply:
 rapply(x, print)
 rapply(x, sum) #Identical: mapply(sum, x)
-rapply(x, length) #identisch: mapply(length, x) #Or: unlist(lapply(x, length)) #oder: sapply(x, length)
+rapply(x, length) #identical: mapply(length, x) #Or: unlist(lapply(x, length)) #or: sapply(x, length)
 rapply(x, function(x){2*x})
 
 #More useful examples (s. http://theautomatic.net/2018/11/13/those-other-apply-functions/):
@@ -80,14 +80,14 @@ aggregate(mtcars$mpg, by=list(mtcars$cyl), FUN=summary)
 #Alternatively a variant with tapply:
 tapply(mtcars$mpg, mtcars$cyl, summary)
 #Another one with split and lapply:
-(splitted <- split(mtcars$mpg, mtcars$cyl))
-lapply(splitted, summary)
+(mysplit <- split(mtcars$mpg, mtcars$cyl))
+lapply(mysplit, summary)
 #aggregate has the advantage of returning a data.frame and not a list like tapply. And one can do more complex things (stratified analyses) slightly easier than with tapply. Example: Get the mean MPG for Transmission grouped by Cylinder:
 aggregate(mpg ~ am + cyl, data=mtcars, mean)
 
 #Summarize and stratify by two variables:
 tapply(mtcars$mpg, list(mtcars$am, mtcars$cyl), FUN=mean)
-aggregate(mpg~am+cyl, data=mtcars, mean)
+aggregate(mpg ~ am + cyl, data=mtcars, mean)
 
 #How can I loop through a list of strings as variables in a model?
 library(mada)
@@ -105,12 +105,10 @@ dat <- read.csv2("C:\\path\\to\\your\\file\\TeachingRatings.csv", header=T, sep=
 nums <- sapply(dat, is.numeric)
 dat[,nums]
 #2.
-dat[,sapply(dat,is.numeric)]
+dat[,sapply(dat, is.numeric)]
 #3.
 numerics <- Filter(is.numeric, dat)
 
 #Apply a function to them:
-sapply(numerics, mean) #Or slightly better because it returns a data.frame as output (otherwise identical):
-Kmisc::dapply(numerics, mean)
+sapply(numerics, mean)
 as.data.frame(sapply(numerics, mean))
-
