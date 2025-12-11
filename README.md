@@ -9,3 +9,6 @@ Some of the "extras" I added:
   - various codes I wrote by myself over the years to get a better understanding of R not only as tool for statistical analyses but also as programming language.
   - A comparison of base R and dplyr.
   - A bootstrap tutorial.
+
+And finally, I uploaded a document "virtual_machine.txt" with a detailed instruction in how to get R and R Markdown to run in case you have any problems in doing so on your computer.
+Drawback: You should at least be able to install VirtualBox and load the virtual hard drive with the preinstalled version of R. This requires considerably more resources than installing R and R Markdown directly on your computer, so it should be a "last resort" solution.
