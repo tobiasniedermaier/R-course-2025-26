@@ -8,3 +8,53 @@ So I did the same again in a virtual machine based on Lubuntu 24.03.3.
 You can find (and download) it here: https://tinyurl.com/4rkupcne or here: https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL3UvYy80NWNkZWYxNTUyNjI4NTljL0lRQ3hQZXhyOWJPOFNxenltbzRnTEJzVEFiYkpERWxTNlF5ZGdaaTZ0M3hzdWF3P2U9aVVDdW9I&cid=45CDEF155262859C&id=45CDEF155262859C%21s6bec3db1b3f54abcacf29a8e202c1b13&parId=45CDEF155262859C%21sea8cc6beffdb43d7976fbc7da445c639&o=OneUp
 Pros: Much easier to use.
 Cons: Considerably larger, thus more RAM and storage required (and a faster CPU), takes longer to boot.
+Instruction (how to use it):
+- Install VirtualBox.
+- Double-click on the vbox file. It should now appear as machinen in VirtualBox.
+- If you want, change some parameteres of the virtual machine, like the amount of RAM allocated to it. To do so, click Modify -> change the allocated memory to e.g. 8192 MB.
+- Click Run.
+
+Keep the zip file in case you accidently delete the vbox or the vdi file!
+
+Once the VM started (which might take a while), you will find on the desktop or in the start menu:
+- R 4.3.3 (console version),
+- a very simple code editor (Mousepad),
+- RStudio,
+- Firefox.
+- In /home/ibe/Downloads you will find a csv file with a data set.
+
+Recommended work flow:
+- Open RStudio (double click on the desktop icon),
+- click "Execute" when asked,
+- Import the data set, create an R Markdown document, do your analyses, compile your document to PDF etc.
+
+R Markdown is pre-installed, together with a range of other packages (dependencies).
+To update the operating system and its installed programs (packages), click start (bird symbol on the bottom-left) -> Preferences -> Lubuntu Update.
+Click Check for Updates -> enter the password (ibe) -> click OK.
+Click Install Updates -> enter the password (ibe) -> click OK.
+Click Close when finished.
+
+To install other applications (which is not necessary for the data project), open the console (Start -> System Tools -> QTerminal) and type this:
+sudo apt update
+ibe
+sudo apt install <name of the package>.
+
+Recommendation: Start with
+sudo apt update && sudo apt upgrade
+sudo apt install synaptic
+Press Y
+Close the console.
+This installs a program with which you can install other programs without using the console.
+
+Open Synaptic from the start menu. (Start -> Preferences -> Synaptic Package Manager)
+type ibe and press OK.
+Read the "Introduction", then close it.
+Click search and type the name of a program of your choice (e.g. abiword for a simple word processor).
+Click on the check box for abiword and select "Mark for installation").
+Click "Mark".
+Click "Apply".
+Click "Apply" again.
+Click Close.
+Close the Synaptic Package Manager.
+You should find the installed application in the start menu.
+If you want to have a shortcut on the desktop: Right click -> Add to Desktop.
