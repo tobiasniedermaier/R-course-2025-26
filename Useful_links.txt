@@ -18,6 +18,10 @@ or (new!) go to:
 https://ide.flexpilot.ai
 This is a modern IDE with AI/LLM integration using GPT-4o.
 
+
+There are also some graphical user interfaces for R which can make your life easier (especially at the beginning), but it's also tempting to simply "click around", by which you will not learn how to actually work in R (as scripting/programming language).
+Example: R Commander (package name Rcmdr)
+
 R is a highly modular statistical programming language. That means it can be extended by packages, which are basically a set of custom functions along with function descriptions and (sometimes) data sets and usage examples (vignettes).
 
 For an overview of R packages sorted by topic, see:
