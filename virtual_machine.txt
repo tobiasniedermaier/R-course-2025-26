@@ -9,9 +9,9 @@ You can find (and download) it here: https://tinyurl.com/4rkupcne or here: https
 Pros: Much easier to use.
 Cons: Considerably larger, thus more RAM and storage required (and a faster CPU), takes longer to boot.
 Instruction (how to use it):
-- Install VirtualBox.
+- Install VirtualBox from here: https://www.virtualbox.org/wiki/Downloads
 - Double-click on the vbox file. It should now appear as machinen in VirtualBox.
-- If you want, change some parameteres of the virtual machine, like the amount of RAM allocated to it. To do so, click Modify -> change the allocated memory to e.g. 8192 MB.
+- If you want, change some parameteres of the virtual machine, like the amount of RAM allocated to it. To do so, click Modify -> change the allocated memory to e.g. 8192 MB. (Please don't allocate more than maybe 60% of your available memory.)
 - Click Run.
 
 Keep the zip file in case you accidently delete the vbox or the vdi file!
