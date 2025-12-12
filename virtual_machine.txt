@@ -5,7 +5,7 @@ Pros: relatively small size, low hardware requirements (RAM, storage, CPU), "no 
 Drawback: It is not user-friendly at all.
 
 So I did the same again in a virtual machine based on Lubuntu 24.03.3.
-You can find (and download) it here: https://tinyurl.com/4rkupcne or here: https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL3UvYy80NWNkZWYxNTUyNjI4NTljL0lRQ3hQZXhyOWJPOFNxenltbzRnTEJzVEFiYkpERWxTNlF5ZGdaaTZ0M3hzdWF3P2U9aVVDdW9I&cid=45CDEF155262859C&id=45CDEF155262859C%21s6bec3db1b3f54abcacf29a8e202c1b13&parId=45CDEF155262859C%21sea8cc6beffdb43d7976fbc7da445c639&o=OneUp
+You can find (and download) it here: https://tinyurl.com/4rkupcne or here: https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL3UvYy80NWNkZWYxNTUyNjI4NTljL0lRQ3hQZXhyOWJPOFNxenltbzRnTEJzVEFiYkpERWxTNlF5ZGdaaTZ0M3hzdWF3P2U9aVVDdW9I
 Pros: Much easier to use.
 Cons: Considerably larger, thus more RAM and storage required (and a faster CPU), takes longer to boot.
 Instruction (how to use it):
