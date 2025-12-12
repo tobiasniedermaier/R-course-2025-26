@@ -2,15 +2,16 @@ I uploaded a zip file containing a virtual machine (Debian 13) with R, R Markdow
 It contains everything you need to run analyses and compile Rmd files to pdf.
 You can find (and download) it here: https://www.swisstransfer.com/d/61cc9943-a0b4-4f6a-bb0f-90d2e5b99cad
 Pros: relatively small size, low hardware requirements (RAM, storage, CPU), "no frills", you will learn a bit how to work with the console in linux.
-Drawback: It is not user-friendly at all.
+Drawback: It is not user-friendly at all. Once the virtual machine booted, you will only see a black screen. Press the left and right mouse key at the same time to open a menu from which you can start a text editor (mousepad) and R.
+This is the "last resort" solution if you have a very old computer with very little RAM.
 
-So I did the same again in a virtual machine based on Lubuntu 24.03.3.
+For a more user-friedly solution, I did the same again in a virtual machine based on Lubuntu 24.03.3.
 You can find (and download) it here: https://tinyurl.com/4rkupcne or here: https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL3UvYy80NWNkZWYxNTUyNjI4NTljL0lRQ3hQZXhyOWJPOFNxenltbzRnTEJzVEFiYkpERWxTNlF5ZGdaaTZ0M3hzdWF3P2U9aVVDdW9I
-Pros: Much easier to use.
+Pros: Much easier to use. (Graphical interface, similar to Windows.)
 Cons: Considerably larger, thus more RAM and storage required (and a faster CPU), takes longer to boot.
 Instruction (how to use it):
 - Install VirtualBox from here: https://www.virtualbox.org/wiki/Downloads
-- Double-click on the vbox file. It should now appear as machinen in VirtualBox.
+- Double-click on the vbox file. It should now appear as machine in VirtualBox.
 - If you want, change some parameteres of the virtual machine, like the amount of RAM allocated to it. To do so, click Modify -> change the allocated memory to e.g. 8192 MB. (Please don't allocate more than maybe 60% of your available memory.)
 - Click Run.
 
@@ -25,14 +26,17 @@ Once the VM started (which might take a while), you will find on the desktop or 
 
 Recommended work flow:
 - Open RStudio (double click on the desktop icon),
-- click "Execute" when asked,
+- click "Execute" when asked (to start the program),
 - Import the data set, create an R Markdown document, do your analyses, compile your document to PDF etc.
 
 R Markdown is pre-installed, together with a range of other packages (dependencies).
-To update the operating system and its installed programs (packages), click start (bird symbol on the bottom-left) -> Preferences -> Lubuntu Update.
-Click Check for Updates -> enter the password (ibe) -> click OK.
-Click Install Updates -> enter the password (ibe) -> click OK.
-Click Close when finished.
+
+Not necessary for the data project, but not a bad idea either:
+Update the operating system and its installed programs (packages). 
+- Click start (bird symbol on the bottom-left) -> Preferences -> Lubuntu Update.
+- Click Check for Updates -> enter the password (ibe) -> click OK.
+- Click Install Updates -> enter the password (ibe) -> click OK.
+- Click Close when finished.
 
 To install other applications (which is not necessary for the data project), open the console (Start -> System Tools -> QTerminal) and type this:
 sudo apt update
