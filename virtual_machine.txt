@@ -17,6 +17,10 @@ Instruction (how to use it):
 
 Keep the zip file in case you accidently delete the vbox or the vdi file!
 
+You will be asked for a username and password to log in to the VM.
+username: ibe
+password: ibe
+
 Once the VM started (which might take a while), you will find on the desktop or in the start menu:
 - R 4.3.3 (console version),
 - a very simple code editor (Mousepad),
