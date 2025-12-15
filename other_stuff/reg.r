@@ -143,4 +143,16 @@ reg <- function(data, outcome, covariates, family = "binomial") {
 # The results remain the same, but the underlying implementation is more robust, more idiomatic, and easier to extend or adapt in future.
 
 
+# Another version that I found, which I wrote in 2022:
+
+reg <- function(data=NULL, family="binomial", y_var=NULL, x_vars=NULL, ...){
+ xyform <- function(y_var, x_vars){
+  as.formula(sprintf("%s ~ %s",
+  y_var, paste(x_vars, collapse="+")))
+ } 
+ res <- summary(glm(xyform(y_var, x_vars), data=data, family=family))
+ res2 <- list(res, paste0("family=", family))
+ return(res2)
+}
+reg(data=mtcars, x_vars=c("cyl","hp","wt"), y_var="am")
 
