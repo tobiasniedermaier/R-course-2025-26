@@ -124,3 +124,6 @@ summary(cox2)
 # Solution 2: Time-varying effect for stage (e.g., the effect of stage could change over time)
 cox3 <- coxph(Surv(time, status == 2) ~ age + sex + hepato + bili + albumin + platelet + tt(stage), data = pbc, tt = function(x, t) x * log(t))
 summary(cox3)
+
+######################
+# To be added: Parametric survival estimations using the package "flexsurv" and the function "flexsurvreg".
