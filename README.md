@@ -15,5 +15,4 @@ And finally, I uploaded a document "virtual_machine.txt" with a detailed instruc
 Drawback: You should at least be able to install VirtualBox and load the virtual hard drive with the preinstalled version of R. This requires considerably more resources than installing R and R Markdown directly on your computer, so it should be a "last resort" solution.
 
 Update December 2025: Merry Christmas to y'all!  
-https://www.youtube.com/watch?v=0FJU4GrXztE  
 https://www.youtube.com/watch?v=_-0fND4HwKk
