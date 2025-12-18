@@ -62,18 +62,22 @@ microbenchmark(
 #R packages are basically a collection of documented functions (and sometimes data), plus (optionally) gentle introductions into how to use the package ("vignettes").
 #A problem: Function names are not "reserved". This means that different packages may use the same function names. What are the implications and how to deal with them?
 #Example: There is a function called describe() in the packge Hmisc. But there is also a function with exactly the same name in the package psych.
+
 #If you first load the Hmisc package:
 library(Hmisc)
-#and then use the describe function:
+
+#And then use the describe function:
 describe(mtcars)
-#R will of course use the describe function from teh Hmisc package.
+#R will of course use the describe function from the Hmisc package.
+
 #But now you load the package psych, which also contains a (different) function named describe(), even though it has a similar purpose:
 library(psych) #R will give you a note that "the object describe was masked". 
 #In simpler words: The function describe from the package Hmisc is no longer directly accessible when using describe() because it was overwritten by the describe() function from psych.
 describe(mtcars) #Quite a difference!
 #The same happens - in reversed order - if you load the psych package first, followed by the Hmisc package.
+
 #So, how to deal with it if you need two functions with the same name from two different packages?
-#-> Functions are also obkjects. So you can simply assign the function from one of the packages to an object under a different name. Example:
+#-> Functions are also objects. So you can simply assign the function from one of the packages to an object under a different name. Example:
 describeH <- Hmisc::describe
 describeP <- psych::describe
 #Now you can use the functions describeH and describeP and you know exactly what output to expect, without conflicting names or overwritten functions.
