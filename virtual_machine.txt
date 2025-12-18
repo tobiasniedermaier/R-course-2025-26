@@ -2,8 +2,9 @@ I uploaded a zip file containing a virtual machine (Debian 13) with R, R Markdow
 It contains everything you need to run analyses and compile Rmd files to pdf.
 You can find (and download) it here: https://www.swisstransfer.com/d/61cc9943-a0b4-4f6a-bb0f-90d2e5b99cad
 Pros: relatively small size, low hardware requirements (RAM, storage, CPU), "no frills", you will learn a bit how to work with the console in linux.
-Drawback: It is not user-friendly at all. Once the virtual machine booted, you will only see a black screen. Press the left and right mouse key at the same time to open a menu from which you can start a text editor (mousepad) and R.
+Drawback: It is not user-friendly at all. Once the virtual machine (VM) booted, you will only see a black screen. Press the left and right mouse key at the same time to open a menu from which you can start a text editor (mousepad) and R.
 This is the "last resort" solution if you have a very old computer with very little RAM.
+Note: You might get an error when trying to start the virtual machine (VM). If so, close/shut down the vM,  right-click on "Current state", click on remove current state (or similar), try to start it again. You should now see a black screen asking for a username (ibe) and password (ibe).
 
 For a more user-friedly solution, I did the same again in a virtual machine based on Lubuntu 24.03.3.
 You can find (and download) it here: https://tinyurl.com/4rkupcne or here: https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL3UvYy80NWNkZWYxNTUyNjI4NTljL0lRQ3hQZXhyOWJPOFNxenltbzRnTEJzVEFiYkpERWxTNlF5ZGdaaTZ0M3hzdWF3P2U9aVVDdW9I
