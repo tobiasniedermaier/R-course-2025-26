@@ -24,11 +24,12 @@ password: ibe
 
 Once the VM started (which might take a while), you will find on the desktop or in the start menu:
 - R 4.3.3 (console version),
-- a very simple code editor (Mousepad),
-- RStudio,
-- Firefox,
-- a very simple file manager (type nnn in the console).
+- a very simple code editor (Geany or Mousepad in the smaller or larger VM, respectively),
+- RStudio*,
+- Firefox*,
+- a very simple file manager (type nnn in the console/Terminal emulator).
 - In /home/ibe/Downloads you will find a csv file with a data set.
+*Only in the "heavier" Lubuntu VM.
 
 Recommended work flow:
 - Open RStudio (double click on the desktop icon),
@@ -44,10 +45,12 @@ Update the operating system and its installed programs (packages).
 - Click Install Updates -> enter the password (ibe) -> click OK.
 - Click Close when finished.
 
-To install other applications (which is not necessary for the data project), open the console (Start -> System Tools -> QTerminal) and type this:
+To install other applications (which is not necessary for the data project) in the Lubuntu VM, open the console (Start -> System Tools -> QTerminal) and type this:
 sudo apt update
 ibe
 sudo apt install <name of the package>.
+
+In the Debian VM, start the terminal emulator by right-clicking on the desktop and opening it. The commands are then the same as in Lubuntu.
 
 Recommendation: Start with
 sudo apt update && sudo apt upgrade
