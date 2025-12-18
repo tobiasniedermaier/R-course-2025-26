@@ -25,7 +25,8 @@ Once the VM started (which might take a while), you will find on the desktop or 
 - R 4.3.3 (console version),
 - a very simple code editor (Mousepad),
 - RStudio,
-- Firefox.
+- Firefox,
+- a very simple file manager (type nnn in the console).
 - In /home/ibe/Downloads you will find a csv file with a data set.
 
 Recommended work flow:
