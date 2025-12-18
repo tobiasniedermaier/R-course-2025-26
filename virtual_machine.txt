@@ -1,6 +1,6 @@
 I uploaded a zip file containing a virtual machine (Debian 13) with R, R Markdown and LaTeX preinstalled (Debian 13+R+markdown+tinytex.7z).
 It contains everything you need to run analyses and compile Rmd files to pdf.
-You can find (and download) it here: https://www.swisstransfer.com/d/61cc9943-a0b4-4f6a-bb0f-90d2e5b99cad
+You can find (and download) it here: https://www.swisstransfer.com/d/61cc9943-a0b4-4f6a-bb0f-90d2e5b99cad or here: https://1drv.ms/u/c/45cdef155262859c/IQBSUIbbfAM4SZl0hQQdkuNdATa76VBeb-97WP5j9P3bG3I?e=Aza8JL
 Pros: relatively small size, low hardware requirements (RAM, storage, CPU), "no frills", you will learn a bit how to work with the console in linux.
 Drawback: It is not user-friendly at all. Once the virtual machine (VM) booted, you will only see a black screen. Press the left and right mouse key at the same time to open a menu from which you can start a text editor (mousepad) and R.
 This is the "last resort" solution if you have a very old computer with very little RAM.
