@@ -19,3 +19,5 @@ colnames(mtcars)[11] <- "geer"
 # Now you want to show the variables with either the name "gear" or "geer":
 find_cols(dat=mtcars, varpart="ge[a|e]r")
 # The [a|e] construct (i.e., the letter at the third position could be either an a or an e) is inherited from the grepl function on which the user-defined find_cols function is based.
+
+## See ?regex for all options on how to use those so-called Regular Expressions (regex) in R.
