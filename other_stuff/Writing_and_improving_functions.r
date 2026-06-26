@@ -4,6 +4,11 @@
 
 #Author: Tobias Niedermaier
 
+
+# The general idea of a function is that it wraps a sequence of code (which are in fact always function calls) into one object (function). 
+# If you apply that function to an eligible object, it will perform the computations within the function.
+# This makes your codes a lot shorter and more readable if you do the same kind of analysis repeatedly (differing maybe only be the variable it is applied to).
+
 dat <- mtcars #small data set included with every R installation
 
 # Manual calculation of liters per 100 km ------------------------------
@@ -82,3 +87,9 @@ mpg_to_lp100km(data=dat, mpgvar="mpg", plausib_bound=15) #Warning
 mpg_to_lp100km(data=dat, mpgvar="mpg", plausib_bound=10) #No warning
 x <- mpg_to_lp100km(data=dat, mpgvar="mpg", plausib_bound=15) #Warning, but calculation is still performed and can be used as usual.
 mpg_to_lp100km(data=iris, mpgvar="Species") #Informative error
+
+
+# Note that functions also have another interesting property: The objects assigned within a function only exist within this function. Thus, kmpg, tmp1, tmp2, and res do not exist in the workspace (global environment) after calling the function.
+# This can be useful to save some memory and keep your workspace tidy.
+# If you actually want a function to store an object (created as intermediate step in the computation sequence) "outside of the function" (in the global enviroonment, accessible for other functionsa and objects), use <<- for assignment (instead of <- ). 
+# This is called global assignment or out-of-scope assignment.
