@@ -1,4 +1,9 @@
 
+####################
+# Base R vs. dyplr
+
+# Author: Tobias Niedermaier
+
 library(dplyr)
 #Example from http://www.onthelambda.com/2014/02/10/how-dplyr-replaced-my-most-common-r-idioms/
 
