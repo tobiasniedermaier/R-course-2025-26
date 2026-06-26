@@ -1,4 +1,9 @@
 
+###########################
+# Functions for analyzing diagnostic test accuracy
+
+# Author: Tobias Niedermaier
+
 library(binom) #for exact confidence intervals of proportions
 bin <- function(x,y, methods="exact", ...){binom.confint(x,y, methods=methods, ...)}
 specify_decimal <- function(x, k=1){as.numeric(noquote(trimws(format(round(x, k), nsmall=k))))}
