@@ -1,4 +1,8 @@
 
+# A customized plot() function
+
+# Author: Tobias Niedermaier
+
 ##### Initial version:
 
 myplot <- function(x=NULL, y=NULL, ...){
