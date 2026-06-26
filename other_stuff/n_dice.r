@@ -1,4 +1,8 @@
 
+# Dice rolling in R
+
+#Author: Tobias Niedermaier
+
 n_dice <- function(n=2, size=100){
  res <- list()
  for(i in 1:n){
