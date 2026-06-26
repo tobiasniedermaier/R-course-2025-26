@@ -1,4 +1,9 @@
 
+# Convert miles per gallon in kilometers per hour
+# including type and plausibility checks
+
+# Author: Tobias Niedermaier
+
 mpg_to_lp100km <- function(data=NULL, mpgvar=NULL, plausib_bound=10){
  if(is.null(data)) stop("No data set provided!")
  if(!is.numeric(data[,mpgvar])) stop("Variable needs to be numeric!")
