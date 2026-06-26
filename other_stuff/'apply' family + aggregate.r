@@ -1,5 +1,10 @@
 
+#######################
+# For a better understanding of the *apply family of functions.
+# Author: Tobias Niedermaier
+# Based on:
 #https://www.r-bloggers.com/using-apply-sapply-lapply-in-r/
+
 #- apply:
 
 # - Example: 
