@@ -2,6 +2,8 @@
 ################################
 # How to save plots in R
 
+# Author: Tobias Niedermaier
+
 boxplot(mpg ~ am, data=mtcars)
 
 #First way (R console):
