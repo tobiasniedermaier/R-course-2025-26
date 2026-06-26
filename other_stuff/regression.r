@@ -3,6 +3,8 @@
 # Different types of regression in R #
 ######################################
 
+# Author: Tobias Niedermaier
+
 ## Linear regression:
 
 mylm <- lm(mpg ~ hp + cyl + wt, data=mtcars)
