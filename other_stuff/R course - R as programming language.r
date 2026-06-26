@@ -1,3 +1,9 @@
+
+########################
+# R as a programming language
+
+# Author: Tobias Niedermaier
+
 #In R, you can do *almost* everything that you can do in other programming languages. Except that R is not designed for writing software and you cannot compile codes to an executable. 
 #It is an object-oriented, functional programming language that supports control structures like if() ... else(), loops (for, while, repeat), object classes, and higher-order functions.
 
