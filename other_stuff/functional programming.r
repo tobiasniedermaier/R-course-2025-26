@@ -1,5 +1,7 @@
 
-#functional programming
+################
+# Functional programming
+
 #http://www.quantide.com/ramarro-chapter-05/
 
 #anonymous functions:
