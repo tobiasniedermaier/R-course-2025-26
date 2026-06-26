@@ -1,5 +1,8 @@
 
 #Common statistical tests:
+
+# Author: Tobias Niedermaier
+
 #see also: https://stats.idre.ucla.edu/r/whatstat/what-statistical-analysis-should-i-usestatistical-analyses-using-r/
 
 ##Chi-squared:
