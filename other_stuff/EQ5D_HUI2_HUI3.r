@@ -1,4 +1,9 @@
 
+############################
+# EQ-5D distributions
+
+# Author: Tobias Niedermaier
+
 ## R code to generate and plot the distribution of all possible EQ-5D-5L values, using the German Value Set:
 
 # All possible combinations and corresponding (negative) utility changes: [Note that the reference value is 1 in case of no restrictions in any of the 5 domains. The values below (one per domain) are subtracted according to the stated severity of the restrictions]
