@@ -1,5 +1,8 @@
 
-#Writing and improving functions
+###########################
+# Writing and improving functions
+
+#Author: Tobias Niedermaier
 
 dat <- mtcars #small data set included with every R installation
 
