@@ -1,5 +1,8 @@
 
-#The various ways of subsetting a data frame:
+# Author: Tobias Niedermaier
+
+## The various ways of subsetting a data frame:
+
 #Built-in data set mtcars; Cars with >= 6 cylinders, more than 150 PS and less than 3.5 tons:
 #1.) extremely complicated:
 mtcars[which(mtcars$cyl>=6 & mtcars$hp>150 & mtcars$wt<3.5),]
@@ -26,7 +29,9 @@ sqldf("select * from mtcars where cyl>=6 and hp >150 and w t<3.5") #Useful for p
 
 #within is practically unnecessary because the same can be done using with() or transform(). Only the syntax is different and slightly shorter on case of several transformation steps. See https://www.r-bloggers.com/friday-function-triple-bill-with-vs-within-vs-transform/
 
-#The various ways of creating a new variable based on two existing variables:
+
+## The various ways of creating a new variable based on two existing variables:
+
 library(MASS)
 head(anorexia); ls.str(anorexia)
 anorexia$wtDiff1 <- anorexia$Postwt - anorexia$Prewt
@@ -46,6 +51,7 @@ anorexia[,wtDiff6 := Postwt - Prewt]
 
 #- One can also assign the same value to several variables at a time:
 (a <- b <- 5)
+
 
 
 
