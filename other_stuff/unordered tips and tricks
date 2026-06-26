@@ -1,5 +1,8 @@
+
 # This is a collection of various tips and tricks in R programming and its application in epidemiology that I learned over the years. 
 # Not all of them are crucial skills, but some of them might make your life easier.
+
+# Author: Tobias Niedermaier
 
 # 1) Speeding up R code:
 # R is not a particularly fast language. But there are some easy ways to speed it up. Some examples:
