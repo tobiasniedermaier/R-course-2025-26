@@ -1,4 +1,8 @@
 
+# Attributes and class systems in R
+
+# Author: Tobias Niedermaier
+
 (x <- x_backup <- 1:3 %o% 3:1) #"outer product"
 
 #und wenn man wirklich nur die Zahlenfolge ohne Matrix-Anordnung haben will:
