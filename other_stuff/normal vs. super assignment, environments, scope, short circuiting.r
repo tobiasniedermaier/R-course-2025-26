@@ -1,6 +1,8 @@
 
 #assignment vs. super assignment
 
+# Author: Tobias Niedermaier
+
 rm(list=ls(all=TRUE))
 
 #normal assignment:
