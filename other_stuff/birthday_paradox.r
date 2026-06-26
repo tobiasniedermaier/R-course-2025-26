@@ -1,4 +1,9 @@
 
+#####################
+# The birthday paradox explained by simulation in R
+
+# Author: Tobias Niedermaier
+
 library(future.apply)
 library(parallel)
 plan(multisession, workers = max(1L, parallel::detectCores() - 1L))
