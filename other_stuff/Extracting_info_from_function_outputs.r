@@ -2,6 +2,8 @@
 ################################################
 # Extracting information from function outputs
 
+# Author: Tobias Niedermaier
+
 #In some cases, functions return data frames, which are very easy to handle. Example:
 (res <- aggregate(mpg ~ cyl + am, data=mtcars, FUN=summary))
 is.data.frame(res) #TRUE
