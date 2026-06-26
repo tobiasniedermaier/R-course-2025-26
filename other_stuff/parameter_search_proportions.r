@@ -1,4 +1,8 @@
 
+#############################
+# Figure out the numerator and denominator of a known proportion (point estimate) + 95% confidence interval
+
+# Author: Tobias Niedermaier, bux fixing and helpful comments by ChatGPT
 
 guess_binom_counts <- function(p_hat,
                                ci_low,
