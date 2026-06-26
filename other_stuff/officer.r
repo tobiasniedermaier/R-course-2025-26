@@ -3,6 +3,8 @@
 # The 'officer' package #
 #########################
 
+# Author (of the following codes, not of the package): Tobias Niedermaier
+
 library(officer)
 library(dplyr)
 library(ggplot2)
