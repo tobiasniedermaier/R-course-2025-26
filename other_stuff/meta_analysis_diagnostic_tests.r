@@ -1,4 +1,9 @@
 
+#########################
+# Meta-analyses of diagnostic tests (sensitivity and specificity)
+
+# Author: Tobias Niedermaier
+
 require(mada) #This package is used to perform a bivariate meta-analysis of sensitivity and specificity of diagnostic tests. In other words, sensitivity and specificity are pooled simultaneously to take their negative correlation into account.
 
 data(AuditC) #Loads a sample data set. Note that the data needs to have the colums TP, FN, FP, TN with the case numbers of true-positives, false-negatives, false-positives, true-negatives for every study.
