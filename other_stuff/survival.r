@@ -3,6 +3,8 @@
 # Survival-Analysen using the "survival" and "survminer" packeges #
 ###################################################################
 
+# Author: Tobias Niedermaier
+
 library(survival) #package for survival analysis
 library(survminer) #for nicer plots using the function ggsurvplot()
 head(pbc) #data set included in the survival package
