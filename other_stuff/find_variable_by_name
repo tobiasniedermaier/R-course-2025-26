@@ -1,6 +1,8 @@
 
 ### Find a variable by its (partial) name ###
 
+# Author: Tobias Niedermaier
+
 # A recurring situation in data analysis: You have a data set with hundrets or thousands of variables and you are looking for a specific one.
 # You remember that the variable contained a certain sequence of letters. Let's take the dataset penguins_raw (built-in in R) as example.
 head(penguins_raw, 3)
