@@ -1,5 +1,6 @@
 
 #A function to perform a (logistic or other) regression without using the equation syntax. Advantage: can be used to perform a number of different regressions, with different data sets and/or covariates adjusted for, using the Map() function.
+# Author: Tobias Niedermaier (enhanced by ChatGPT)
 
 ## My own version, written in 2019 or so:
 
