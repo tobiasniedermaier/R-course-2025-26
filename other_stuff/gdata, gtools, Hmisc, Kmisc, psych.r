@@ -1,4 +1,8 @@
 
+# A brief practical introduction into a few useful R packages for data manipulation and analysis
+
+# Author: Tobias Niedermaier
+
 #######################
 # The "gdata" package #
 #######################
@@ -99,5 +103,3 @@ describeBy(mtcars, mtcars$am)
 headTail(mtcars)
 corPlot(mtcars)
 corr.test(mtcars)
-
-
