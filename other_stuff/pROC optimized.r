@@ -1,4 +1,7 @@
 
+# Author: Tobias Niedermaier
+# The code is in fact not optimized in terms of speed. But it should be easier to apply and maybe easier to understand than the original syntax of the pROC package.
+
 rm(list=ls(all=TRUE))
 library(pROC)
 data(aSAH)
@@ -19,4 +22,3 @@ pROC <- function(data, marker){
 roc_men_ndka <- pROC(men, "ndka")
 roc_women_ndka <- pROC(women, "ndka")
 roc_men_s100b <- pROC(men, "s100b")
-
