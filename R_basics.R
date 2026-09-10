@@ -1,557 +1,748 @@
 # ===============================================================
-# R WORKSHOP: Essentials (Consolidated)
+# R WORKSHOP: Essentials (Didactic Master)
 # ===============================================================
+#
+# Guiding principle of this version:
+# - concepts are introduced before they are used in less transparent ways
+# - built-in/source data sets are not modified directly
+# - examples that modify data work on explicit copies
+# - compact R shortcuts are shown only after the transparent version
+# - examples that write files use tempdir() so they do not clutter the
+#   current working directory unless you deliberately adapt them
 #
 # Topics covered
-# - Packages & data
-# - NEW from second beginner script: vector/data-frame indexing & logical subsetting
-# - Type checks (numeric/character/factor) for single columns and all columns
-# - Data cleaning (missing values, implausible values, winsorization)
-# - Variable name and string utilities
-# - Distributions & quick EDA (base R + lattice)
-# - Creating dummy & multi-condition variables
-# - NEW from second beginner script: multi-category variables, sorting & equality checks
-# - t-tests, cross-tabulations
-# - Logistic regression (+ nested model comparison)
-# - Mean, median, mode; Chi-squared; ANOVA
-# - Assorted plotting gallery (incl. QQ and time-series examples)
-# - NEW from second beginner script: reproducibility, function calls & package namespaces
-# - Working directory & file I/O; arrays; extra head/tail/names peek; step-by-step mode() decomposition
+# - Packages and data; quick data inspection
+# - Vector and data-frame indexing; logical subsetting; missing values
+# - Type checks
+# - Data cleaning and safe use of copies
+# - Creating dummy and multi-category variables
+# - Descriptive summaries and distributions
+# - t-tests and cross-tabulations
+# - Logistic regression and nested model comparison
+# - Defining functions and package namespaces
+# - Mean, median, statistical mode; grouped summaries; Chi-squared; ANOVA
+# - Base R and lattice graphics; QQ, time-series and function plots
+# - Working directory and file I/O
+# - Arrays / higher-dimensional objects
 #
-# Optional packages: psych, ISLR, lattice, (kutils)
-# Data used: built-in (iris, mtcars, airquality, women) + ISLR (Auto, Credit)
+# Optional add-on packages used below: psych, ISLR, lattice
+# Install them ONCE if needed:
+# install.packages(c("psych", "ISLR", "lattice"), dependencies = TRUE)
 # ===============================================================
 
-## ---------------------------------------------------------------
-## 0a) Packages & Data
-## ---------------------------------------------------------------
-# install.packages(c("psych","ISLR","lattice","kutils"), dependencies = TRUE)
-suppressPackageStartupMessages({
-  library(psych)    # winsor()
-  library(ISLR)     # Auto, Credit
-  library(lattice)  # densityplot, bwplot, xyplot, histogram
-  # library(kutils) # mgsub(); uncomment if installed
-})
-
-# Quick peeks at ISLR data (loaded with library(ISLR)):
-head(Auto);     dat_isrl   <- Auto
-head(Credit);   dat_credit <- Credit
-
-# A few more handy peeks (names/colnames; head with n; tail)
-names(dat_isrl); colnames(dat_isrl)
-head(Credit, 10)
-tail(Credit)
-
 
 ## ---------------------------------------------------------------
-## 0b) Working directory & file I/O 
+## 0) Packages, data and first inspection
 ## ---------------------------------------------------------------
-# Working directory helpers
-getwd() # current working directory
-# setwd("...") # set working directory (uncomment & adapt)
 
+# R already contains several example data sets, e.g. mtcars and iris.
+mtcars
+head(mtcars)            # first 6 observations
+head(mtcars, 10)        # first 10 observations
+tail(mtcars)            # last 6 observations
+summary(mtcars)         # quick descriptive overview
+str(mtcars)             # structure: dimensions, variable names and types
+names(mtcars)            # variable names
+nrow(mtcars)             # number of rows
+ncol(mtcars)             # number of columns
+dim(mtcars)              # rows and columns together
 
-# CSV write/read demo (use a built-in data frame so it runs anywhere)
-write.csv(mtcars, file = "example_data.csv", row.names = FALSE)
-d_loaded <- read.csv("example_data.csv")
+# Assignment creates another object. For a data frame, this allows us to modify
+# the new object later without deliberately changing the source object mtcars.
+dat_mtcars <- mtcars
 
+# Add-on packages provide further functions and data sets.
+# library(package) attaches a package for the current R session.
+# package::object accesses one function/data object explicitly without attaching
+# the whole package. This notation is especially clear in teaching scripts.
+dat_auto   <- ISLR::Auto
+dat_credit <- ISLR::Credit
 
-# Save and load R objects (RData)
-a_list <- list(answer = 42, data = iris, comment = "whatever")
-save(a_list, file = "example_object.RData")
-load("example_object.RData")
+head(dat_auto)
+head(dat_credit)
+names(dat_credit)
 
 
 ## ---------------------------------------------------------------
-## 0c) Arrays / higher-dimensional objects
+## 1) Basic indexing / subsetting
 ## ---------------------------------------------------------------
-# You can create 3D (or higher) arrays in R:
-a <- array(1:12, dim = c(3, 2, 2))
-dim(a)
-a[,,1]
-a[1,,]
 
-
-
-
-## ---------------------------------------------------------------
-## 0d) NEW FROM SECOND BEGINNER SCRIPT: Basic indexing / subsetting
-## ---------------------------------------------------------------
-# This section contains concepts that were not yet shown explicitly in the
-# consolidated script. The "NEW" label makes the additions easy to trace.
-
-# --- Subsetting a vector ---
-a_vec <- c(4,6,8,5,2,6,7,89,65,4,3,6,8,9,5,3,35,83,75,6)
+# --- 1a) Subsetting a vector ---
+a_vec <- c(4, 6, 8, 5, 2, 6, 7, 89, 65, 4,
+           3, 6, 8, 9, 5, 3, 35, 83, 75, 6)
 a_vec
 length(a_vec)                 # number of elements
 
-a_vec[1]                     # first element
-a_vec[-1]                    # all except the first element
-a_vec[2:5]                   # elements 2 to 5
-a_vec[-c(3,6,8)]             # exclude elements 3, 6 and 8
+# Positive indices select positions:
+a_vec[1]                      # first element
+a_vec[2:5]                    # elements 2 to 5
 
-a_vec[a_vec == 65]           # values equal to 65
-a_vec > 60                   # logical vector: TRUE/FALSE for each element
-a_vec[a_vec > 60]            # values > 60
-a_vec[a_vec > 60 | a_vec < 8]# OR: values > 60 OR < 8
-a_vec[a_vec > 60 & a_vec < 80]# AND: values > 60 AND < 80
+# Negative indices exclude positions:
+a_vec[-1]                     # all except the first element
+a_vec[-c(3, 6, 8)]            # exclude elements 3, 6 and 8
+
+# Comparisons produce logical vectors (TRUE/FALSE):
+a_vec == 65
+a_vec > 60
+
+# A logical vector can itself be used as an index:
+a_vec[a_vec == 65]            # values equal to 65
+a_vec[a_vec > 60]             # values > 60
+a_vec[a_vec > 60 | a_vec < 8] # | means OR
+a_vec[a_vec > 60 & a_vec < 80]# & means AND
 
 # Create and reuse an index vector:
 selection <- seq(from = 1, to = length(a_vec), by = 2)
 selection
-a_vec[selection]             # every second element, starting with the first
+a_vec[selection]              # every second element, starting with the first
 
-# Equivalent ways of writing seq():
-a_vec[seq(from = 1, to = length(a_vec), by = 2)]
-a_vec[seq(1, length(a_vec), 2)]
-a_vec[seq(to = length(a_vec), from = 1, by = 2)]
+# Equivalent ways of writing seq(); named arguments are clearest for beginners:
+seq(from = 1, to = length(a_vec), by = 2)
+seq(1, length(a_vec), 2)
+seq(to = length(a_vec), from = 1, by = 2)
 
-# Missing-value indices. a_vec currently contains no NA, so both return integer(0):
-which(is.na(a_vec))
-which(is.na(a_vec[selection]))
-
-# A concrete NA example is more informative for beginners:
+# --- 1b) Missing values ---
+# NA means a missing / unavailable value.
 a_with_na <- a_vec
 a_with_na[c(3, 8)] <- NA
-which(is.na(a_with_na))
-a_with_na[!is.na(a_with_na)] # keep only non-missing values
+a_with_na
 
-# --- Subsetting a data frame ---
-dat_mtcars <- mtcars
-dat_mtcars[, 3]              # third column
-dat_mtcars[1:5, ]            # first five rows
-mysubset <- dat_mtcars[c(2,4), -c(1:3)] # rows 2 & 4; exclude columns 1 to 3
+is.na(a_with_na)              # TRUE where values are missing
+which(is.na(a_with_na))       # positions of the missing values
+!is.na(a_with_na)             # ! means NOT
+a_with_na[!is.na(a_with_na)]  # keep only non-missing values
+sum(is.na(a_with_na))         # number of missing values
+
+# --- 1c) Subsetting a data frame ---
+# In data_frame[rows, columns], the comma separates rows from columns.
+dat_mtcars[, 3]               # third column; simplified to a vector
+dat_mtcars[, "disp"]          # the same column selected by name
+dat_mtcars[1:5, ]             # first five rows, all columns
+
+# Keep the result as a one-column data frame instead of simplifying to a vector:
+dat_mtcars[, 3, drop = FALSE]
+
+# Select rows 2 and 4, but exclude columns 1 to 3:
+mysubset <- dat_mtcars[c(2, 4), -c(1:3)]
 mysubset
 summary(mysubset)
 
+# $ is a convenient way to select one named column:
+dat_mtcars$mpg
+
 
 ## ---------------------------------------------------------------
-## 1) Type checks (character vs numeric/factor)
+## 2) Variable types
 ## ---------------------------------------------------------------
-dat <- iris
-# Single variables
-is.numeric(dat$Sepal.Length)
-is.character(dat$Sepal.Length)
-is.numeric(dat$Species)
-is.character(dat$Species)
-is.factor(dat$Species)
 
-# All variables at once
-sapply(dat, is.numeric)
-sapply(dat, is.character)
-sapply(dat, is.factor)
+dat_iris <- iris
 
-# From ISLR example:
-sapply(dat_isrl, is.numeric)
+# Single variables:
+is.numeric(dat_iris$Sepal.Length)
+is.character(dat_iris$Sepal.Length)
+is.numeric(dat_iris$Species)
+is.character(dat_iris$Species)
+is.factor(dat_iris$Species)
+
+# sapply(data_frame, function) applies the named function to every column and
+# usually simplifies the results to a vector:
+sapply(dat_iris, is.numeric)
+sapply(dat_iris, is.character)
+sapply(dat_iris, is.factor)
+sapply(dat_auto, is.numeric)
+
 
 ## ---------------------------------------------------------------
-## 2) Data cleaning
+## 3) Data cleaning -- use copies so examples stay independent
 ## ---------------------------------------------------------------
-# 2a) Missing values (airquality)
-head(airquality)
-summary(airquality)                                   # quick overview (incl. NAs)
-sapply(airquality, function(x) sum(is.na(x)))         # NA counts by column
 
-# Mean with/without NAs
-mean(airquality$Ozone)                                # NA
-mean(airquality$Ozone, na.rm = TRUE)                  # OK
+# --- 3a) Missing values ---
+dat_air <- airquality
+head(dat_air)
+summary(dat_air)
 
-# Quick data overview + boxplots
-summary(airquality)
-boxplot(airquality)
+# is.na(dat_air) creates a TRUE/FALSE matrix. colSums() counts TRUE values in
+# each column because TRUE is treated as 1 and FALSE as 0.
+colSums(is.na(dat_air))
 
-# 2b) Dichotomize variable
-airquality$Ozone_dicho <- ifelse(airquality$Ozone > 40, "high", "low")
+# Mean with/without missing values:
+mean(dat_air$Ozone)                   # NA because Ozone contains missing values
+mean(dat_air$Ozone, na.rm = TRUE)     # ignore NAs
 
-# 2c) Winsorize outliers (practical trimming at 5%)
-airquality$Ozone_w05 <- winsor(airquality$Ozone, trim = 0.05)
-hist(airquality$Ozone)
-hist(airquality$Ozone_w05)
+# --- 3b) Dichotomize a variable ---
+# Work on a copy rather than modifying airquality itself.
+dat_air_clean <- dat_air
+dat_air_clean$Ozone_dicho <- ifelse(dat_air_clean$Ozone > 40,
+                                    "high", "low")
+table(dat_air_clean$Ozone_dicho, exclude = NULL)
 
-# 2d) Standard deviation for all variables
+# --- 3c) Winsorize outliers ---
+# psych::winsor() explicitly identifies the package that supplies winsor().
+dat_air_clean$Ozone_w05 <- psych::winsor(dat_air_clean$Ozone, trim = 0.05)
+
+# --- 3d) Apply one summary function to every column ---
+# lapply() returns a list; sapply() usually simplifies the result.
 lapply(mtcars, sd)
 sapply(mtcars, sd)
-# sd() is not vectorized over data frames by default; Vectorize it:
-vsd <- Vectorize(sd)
-vsd(mtcars)
 
-# 2e) Implausible values (ISLR::Credit)
-# Suppose >5 cards is implausible → set to NA
-table(dat_credit$Cards)
-dat_credit$Cards[dat_credit$Cards > 5] <- NA
+# Vectorize(sd) is intentionally NOT used here. sapply() already expresses the
+# intended operation directly: apply sd() separately to every column.
 
-# Suppose Income <100 AND Limit >6000 is implausible; set Limit to 6000 in those rows
-nrow(dat_credit[dat_credit$Income < 100 & dat_credit$Limit > 6000, ])  # before
-dat_credit[dat_credit$Income < 100 & dat_credit$Limit > 6000, "Limit"] <- 6000
-nrow(dat_credit[dat_credit$Income < 100 & dat_credit$Limit > 6000, ])  # after
+# --- 3e) Detect and change implausible values ---
+# Again, modify a copy; dat_credit itself remains unchanged.
+dat_credit_clean <- dat_credit
 
-# 2f) Column name utilities
-colnames(dat_credit)
-colnames(dat_credit) <- tolower(colnames(dat_credit))               # all lower case
-colnames(dat_credit) <- toupper(colnames(dat_credit))               # all upper case
-# Capitalize first letter, lower case for the rest:
-colnames(dat_credit) <- paste0(toupper(substring(colnames(dat_credit), first=1, last=1)),
-                               tolower(substring(colnames(dat_credit), 2)))
+# Example rule: suppose more than 5 cards is considered implausible.
+table(dat_credit_clean$Cards)
+dat_credit_clean$Cards[dat_credit_clean$Cards > 5] <- NA
+table(dat_credit_clean$Cards, exclude = NULL)
 
-# 2g) String manipulation (normalize Y/N)
-# gsub("Y", "y", dat_credit$Married)
-##More explicit:
-# gsub(pattern="Y", replacement="y", x=dat$Married) #pattern = what to replace. replacement = with what to replace the pattern. x = the vector in which something should be replaced.
+# Example rule involving two conditions:
+sum(dat_credit_clean$Income < 100 & dat_credit_clean$Limit > 6000)
+dat_credit_clean$Limit[
+  dat_credit_clean$Income < 100 & dat_credit_clean$Limit > 6000
+] <- 6000
+sum(dat_credit_clean$Income < 100 & dat_credit_clean$Limit > 6000)
 
-# gsub("N", "n", dat_credit$Married)
-# If you have kutils installed:
-# kutils::mgsub(c("Y","N"), c("y","n"), dat_credit$Married)
-#Or:
-library(kutils)
-mgsub(c("Y","N"), c("y","n"), dat_credit$Married)
+# --- 3f) Column-name utilities ---
+# Show transformations without changing the main dat_credit object.
+tolower(names(dat_credit))
+toupper(names(dat_credit))
 
-## ---------------------------------------------------------------
-## 3) Data distribution & quick EDA
-## ---------------------------------------------------------------
-# Simulated uniform & normal:
-unifdist <- runif(n = 10000, min = 10, max = 30); hist(unifdist)
-normdist <- rnorm(n = 1000, mean = 5, sd = 3);      hist(normdist)
+# Example: capitalize first letter and lower-case the rest.
+dat_names <- dat_credit
+new_names <- paste0(
+  toupper(substring(names(dat_names), first = 1, last = 1)),
+  tolower(substring(names(dat_names), first = 2))
+)
+names(dat_names) <- new_names
+names(dat_names)
 
-# Density overlay (iris):
-dens <- density(iris$Sepal.Length)
-hist(iris$Sepal.Length, breaks = 20, freq = FALSE, main = "Sepal.Length with density")
-lines(dens)
+# --- 3g) String manipulation ---
+# gsub(pattern, replacement, x) replaces matching text in a character vector.
+married_lower <- gsub(pattern = "Y", replacement = "y", x = dat_credit$Married)
+married_lower <- gsub(pattern = "N", replacement = "n", x = married_lower)
+head(married_lower)
 
-# Lattice quick looks (ISLR::Credit):
-hist(dat_credit$Income)
-hist(dat_credit$Income, breaks = 30)
-boxplot(dat_credit$Income, horizontal = TRUE)
-densityplot(dat_credit$Income)
-bwplot(dat_credit$Income)
-xyplot(Limit ~ Married, data = dat_credit)
-qqnorm(dat_credit$Income); qqline(dat_credit$Income)
-
-# Time-series & time-based examples
-# NEW FROM SECOND BEGINNER SCRIPT: set.seed() makes random examples reproducible.
-set.seed(1)
-x <- rnorm(500); y <- x + rnorm(500)
-par(mfrow = c(2, 3))
-my_ts    <- ts(matrix(rnorm(500), nrow = 500, ncol = 1), start = c(1950, 1), frequency = 12)
-my_dates <- seq(as.Date("2005/1/1"), by = "month", length = 50)
-my_factor <- factor(mtcars$cyl)
-square <- function(z) z^2
-
-plot(x, y, main = "Scatterplot")
-plot(my_factor, main = "Barplot")
-plot(my_factor, rnorm(32), main = "Boxplot")
-plot(my_ts, main = "Time series")
-plot(my_dates, rnorm(50), main = "Time-based plot")
-plot(square, 0, 10, main = "Plot a function")
-par(mfrow = c(1, 1))
 
 ## ---------------------------------------------------------------
-## 4) Create new variables (dummy & multi-condition)
+## 4) Create new variables
 ## ---------------------------------------------------------------
-# 4a) From units (women dataset → BMI)
+
+# --- 4a) Derive variables from existing variables ---
 dat_w <- women
-dat_w$height_m <- dat_w$height * 2.54 / 100
+dat_w$height_m  <- dat_w$height * 2.54 / 100
 dat_w$weight_kg <- dat_w$weight * 0.4535924
-dat_w$bmi <- dat_w$weight_kg / dat_w$height_m^2
+dat_w$bmi       <- dat_w$weight_kg / dat_w$height_m^2
+head(dat_w)
 
-# 4b) Dummy from median (ISLR::Credit Income)
-median_income <- median(dat_credit$Income, na.rm = TRUE)
-dat_credit$Income_bin    <- ifelse(dat_credit$Income > median_income, "high", "low")
-dat_credit$Income_factor <- factor(dat_credit$Income_bin)
+# --- 4b) Binary variable based on a median ---
+dat_credit_vars <- dat_credit
+median_income <- median(dat_credit_vars$Income, na.rm = TRUE)
+dat_credit_vars$Income_bin <- ifelse(dat_credit_vars$Income > median_income,
+                                     "high", "low")
+dat_credit_vars$Income_factor <- factor(dat_credit_vars$Income_bin)
+table(dat_credit_vars$Income_factor)
 
-# 4c) Multi-condition dummy (mtcars)
-mtcars$newvar  <- ifelse(mtcars$mpg > 20 & mtcars$hp > 80 & mtcars$cyl == 6, 1, 0)
-mtcars$newvar2 <- ifelse(mtcars$mpg > 20 & (mtcars$hp > 80 | mtcars$cyl == 6), 1, 0)
+# --- 4c) Variables based on several conditions ---
+# Work on a copy rather than adding columns directly to mtcars.
+dat_mtcars_vars <- mtcars
 
-# 4d) Multi-condition dummies (ISLR::Credit)
-# Indexing approach:
-dat_credit$married_man <- NA
-dat_credit$married_man[dat_credit$Gender == "Male"   & dat_credit$Married == "Yes"] <- 1
-dat_credit$married_man[is.na(dat_credit$married_man)] <- 0
+dat_mtcars_vars$newvar <- ifelse(
+  dat_mtcars_vars$mpg > 20 &
+    dat_mtcars_vars$hp > 80 &
+    dat_mtcars_vars$cyl == 6,
+  1, 0
+)
 
-dat_credit$married_woman <- NA
-dat_credit$married_woman[dat_credit$Gender == "Female" & dat_credit$Married == "Yes"] <- 1
-dat_credit$married_woman[is.na(dat_credit$married_woman)] <- 0
+dat_mtcars_vars$newvar2 <- ifelse(
+  dat_mtcars_vars$mpg > 20 &
+    (dat_mtcars_vars$hp > 80 | dat_mtcars_vars$cyl == 6),
+  1, 0
+)
 
-dat_credit$not_married <- NA
-dat_credit$not_married[dat_credit$Married == "No"]  <- 1
-dat_credit$not_married[dat_credit$Married == "Yes"] <- 0
+table(dat_mtcars_vars$newvar)
+table(dat_mtcars_vars$newvar2)
 
-# ifelse() approach as an alternative:
-dat_credit$rich_caucasian_man <- ifelse(dat_credit$Gender == "Male" &
-                                        dat_credit$Ethnicity == "Caucasian" &
-                                        dat_credit$Income_factor == "high", 1, 0)
+# --- 4d) Stepwise dummy creation by indexing ---
+dat_credit_vars$married_man <- NA_integer_
+dat_credit_vars$married_man[
+  dat_credit_vars$Gender == "Male" & dat_credit_vars$Married == "Yes"
+] <- 1
+dat_credit_vars$married_man[is.na(dat_credit_vars$married_man)] <- 0
 
+dat_credit_vars$married_woman <- NA_integer_
+dat_credit_vars$married_woman[
+  dat_credit_vars$Gender == "Female" & dat_credit_vars$Married == "Yes"
+] <- 1
+dat_credit_vars$married_woman[is.na(dat_credit_vars$married_woman)] <- 0
 
+dat_credit_vars$not_married <- ifelse(dat_credit_vars$Married == "No", 1, 0)
 
-# 4e) NEW FROM SECOND BEGINNER SCRIPT: add/fill variables, compare, sort
-# Add a new initially empty variable:
-dat2 <- data.frame(mtcars, transmission = NA_character_)
+# The same idea can be written directly with ifelse():
+dat_credit_vars$rich_caucasian_man <- ifelse(
+  dat_credit_vars$Gender == "Male" &
+    dat_credit_vars$Ethnicity == "Caucasian" &
+    dat_credit_vars$Income_factor == "high",
+  1, 0
+)
 
-# Fill it by condition. In mtcars, am = 1 means manual and am = 0 automatic.
+# --- 4e) Add an initially empty variable and fill it ---
+dat2 <- mtcars
+dat2$transmission <- NA_character_
+
+# In mtcars, am = 0 means automatic and am = 1 means manual.
 dat2$transmission[dat2$am == 1] <- "manual"
 dat2$transmission[dat2$am == 0] <- "automatic"
 
-# Alternative with ifelse():
+# Alternative using ifelse():
 dat2$transmission2 <- ifelse(dat2$am == 1, "manual", "automatic")
 identical(dat2$transmission, dat2$transmission2)
 
 # Sorting:
-sort(dat2$mpg)               # ascending
-rev(sort(dat2$mpg))          # descending
+sort(dat2$mpg)                 # ascending
+rev(sort(dat2$mpg))            # descending
 
-# Multi-category variable created step by step:
+# --- 4f) Multi-category variable and an intentionally missed boundary ---
 dat2$fuel_consumption <- NA_character_
 dat2$fuel_consumption[dat2$mpg > 21] <- "low"
 dat2$fuel_consumption[dat2$mpg <= 21 & dat2$mpg > 15] <- "medium"
 dat2$fuel_consumption[dat2$mpg < 15] <- "high"
 
-# Deliberately, mpg == 15 is not covered by the rules above.
-# This demonstrates how an overlooked boundary value remains NA.
-table(dat2$fuel_consumption)
+# mpg == 15 was accidentally omitted. It therefore remains NA.
 table(dat2$fuel_consumption, exclude = NULL)
 sum(is.na(dat2$fuel_consumption))
+dat2$mpg[is.na(dat2$fuel_consumption)]
 
-# Logical vectors can be counted because TRUE is treated as 1 and FALSE as 0:
+# Fix the boundary condition:
+dat2$fuel_consumption[dat2$mpg <= 15] <- "high"
+sum(is.na(dat2$fuel_consumption))
+
+# Logical conditions can be counted directly:
 dat2$mpg > 21
 sum(dat2$mpg > 21)
 sum(dat2$mpg <= 21)
-sum(!(dat2$mpg > 21))        # same logical idea, written explicitly
+sum(!(dat2$mpg > 21))          # equivalent to mpg <= 21 here
 
 
 ## ---------------------------------------------------------------
-## 5) t-tests
+## 5) Descriptive summaries and distributions
 ## ---------------------------------------------------------------
-# Two groups within a variable (mtcars: mpg by am):
+
+summary(dat_credit)
+mean(dat_credit$Income)
+median(dat_credit$Income)
+
+# Reproducible random examples:
+set.seed(1)
+unifdist <- runif(n = 10000, min = 10, max = 30)
+normdist <- rnorm(n = 1000, mean = 5, sd = 3)
+
+summary(unifdist)
+summary(normdist)
+
+# Histograms and density plots are shown in more detail in Section 11.
+
+
+## ---------------------------------------------------------------
+## 6) t-tests
+## ---------------------------------------------------------------
+
+# Formula notation: response ~ grouping_variable
+# Compare mean mpg between automatic (am = 0) and manual (am = 1) cars.
 t.test(mpg ~ am, data = mtcars)
 
-# Two numeric vectors (iris):
-t.test(iris$Sepal.Length, iris$Petal.Length) #Compares mean of Sepal.Length with mean of Petal.Length in the iris data set.
+# The same comparison written as two explicit numeric vectors:
+t.test(
+  mtcars$mpg[mtcars$am == 0],
+  mtcars$mpg[mtcars$am == 1]
+)
 
-# Example from ISLR::Credit: Are men richer than women?
-t.test(Income ~ Gender, data = dat_credit) #Compares two groups from the same variable (Income stratified by Gender).
+# Another example: compare mean Income by Gender in Credit.
+t.test(Income ~ Gender, data = dat_credit)
+
 
 ## ---------------------------------------------------------------
-## 6) Cross-tabulation
+## 7) Cross-tabulation
 ## ---------------------------------------------------------------
+
+table(mtcars$cyl)
 table(mtcars$cyl, mtcars$am)
-table(mtcars[, c("cyl","am")])
+table(mtcars[, c("cyl", "am")])
 table(mtcars$cyl, mtcars$am, mtcars$vs)
 
-# With factors/NAs shown (ISLR::Credit):
-table(dat_credit$Income_factor, dat_credit$Gender)
-table(dat_credit$Income_factor, dat_credit$Gender, exclude = NULL)
-table(dat_credit[, c("Income_factor","Gender","Married")])
+# With derived Credit variables:
+table(dat_credit_vars$Income_factor, dat_credit_vars$Gender)
+table(dat_credit_vars$Income_factor, dat_credit_vars$Gender, exclude = NULL)
+table(dat_credit_vars[, c("Income_factor", "Gender", "Married")])
+
 
 ## ---------------------------------------------------------------
-## 7) Logistic regression
+## 8) Logistic regression
 ## ---------------------------------------------------------------
-# 7a) airquality: ozone high (1) vs. predictors
+
+# --- 8a) airquality: high ozone (1) vs predictors ---
+# Start from the original data set again so this example does not depend on
+# anything that happened in the data-cleaning section.
 dat_aq <- airquality
 dat_aq$Ozone_dicho <- ifelse(dat_aq$Ozone > 40, 1, 0)
 
-# GLM with binomial family (logistic regression)
-# WARNING: If you forget family = "binomial", R will do a *linear* model instead of a logistic regression!
-mylogreg <- glm(Ozone_dicho ~ Temp + Wind, data = dat_aq, family = "binomial")
+# family = binomial specifies logistic rather than linear regression.
+mylogreg <- glm(
+  Ozone_dicho ~ Temp + Wind,
+  data = dat_aq,
+  family = binomial
+)
+
 mylogreg
 summary(mylogreg)
-coef(mylogreg)                  # log-odds
-confint(mylogreg)               # CI on log-odds
+coef(mylogreg)                  # coefficients on the log-odds scale
+confint(mylogreg)               # confidence intervals on log-odds scale
 exp(coef(mylogreg))             # odds ratios
-exp(confint(mylogreg))          # CI for ORs
-#plot(mylogreg) #Model diagnostics
+exp(confint(mylogreg))          # confidence intervals for odds ratios
 
-# 7b) ISLR::Credit: Married ~ Income + Education (+ Cards)
-datc <- dat_credit[complete.cases(dat_credit), ]
-logreg1 <- glm(Married ~ Income + Education, data = datc, family = "binomial")
-logreg2 <- glm(Married ~ Income + Education + Cards, data = datc, family = "binomial")
+# --- 8b) Nested logistic models using the SAME observations ---
+# A model comparison should not be driven by different rows being removed.
+# Therefore determine complete cases using every variable needed by EITHER model.
+model_vars <- c("Married", "Income", "Education", "Cards")
+keep <- complete.cases(dat_credit[, model_vars])
+datc <- dat_credit[keep, ]
 
-summary(logreg1)
-exp(coef(logreg1)); exp(confint(logreg1))
+logreg_small <- glm(
+  Married ~ Income + Education,
+  data = datc,
+  family = binomial
+)
 
-# Model comparison (ANOVA for nested models only!)
-anova(logreg1, logreg2, test = "Chisq")
-# For non-nested comparisons, use:
-AIC(logreg1, logreg2); BIC(logreg1, logreg2)
-# Note that anova() for model comparison is only valid in case of nested models. I.e. you use the same data, the same response variable, and model 1 contains all the variables that are included in model 2, but model 2 has one or more further variables. (I.e. the smaller model is a true subset of the larger model.) If this is not the case, R will still produce an output and a p value, but this is not a valid comparison.
+logreg_large <- glm(
+  Married ~ Income + Education + Cards,
+  data = datc,
+  family = binomial
+)
+
+summary(logreg_small)
+exp(coef(logreg_small))
+exp(confint(logreg_small))
+
+# Likelihood-ratio comparison of nested models:
+anova(logreg_small, logreg_large, test = "Chisq")
+
+# "Nested" means that the smaller model contains a subset of the predictors in
+# the larger model, with the same response and the same observations.
+# For non-nested model comparison, information criteria such as AIC/BIC can be used:
+AIC(logreg_small, logreg_large)
+BIC(logreg_small, logreg_large)
+
 
 ## ---------------------------------------------------------------
-## 8) Mean, median, mode; Chi-squared; ANOVA
+## 9) Defining functions and package namespaces
 ## ---------------------------------------------------------------
-dat_mtc <- mtcars
-mean(dat_mtc$mpg)
 
-# NA-safe mean demo
-dat_mtc[5,3] <- NA
-mean(dat_mtc$disp)                 # NA
-mean(dat_mtc$disp, na.rm = TRUE)   # OK
-
-# Means for all variables:
-sapply(dat_mtc, mean)
-sapply(dat_mtc, mean, na.rm = TRUE)
-
-# Mode (two implementations):
-Mode <- function(x) {
-  ux <- unique(x)
-  ux[which.max(tabulate(match(x, ux)))]
+# A function has a name, one or more arguments, and a body.
+# Curly braces are optional for a single expression, but using them consistently
+# is clearer for beginners.
+square <- function(x) {
+  x^2
 }
-find_mode <- function(x) {
-  u   <- unique(x)
-  tab <- tabulate(match(x, u))
-  u[tab == max(tab)]
-}
-vec <- c(-5, 3, 6, 3, 7)
-Mode(vec); find_mode(vec)
-median(vec)
 
-# NEW: Step-by-step breakdown of the second mode approach (didactic)
-# (Using a concrete variable for readability)
-x <- datc$Cards
-u <- unique(x) #unique(datc$Cards) returns the different possible values of the variable, in the order in which they first appear in the data set. (You could get the same - but in another data type (character) with names(table(datc$Cards)).)
-x_u_matched <- match(x, u)  #match() returns the position at which it finds the values of x in u. The first 5 elements of x are 2, 3, 4, 3, 2. in u (2, 3, 4, 5, 1), those are the positions 1, 2, 3, 2, 1. "5" occurs for the first time in the 9th value of x. It is the 4th value of u. So the 9th value of match(x, u) is 4. Every other "5" in the vector x will also get the value 4 as outcome of match(x, u).
-tab <- tabulate(x_u_matched)  #tabulate() counts the number of times each integer occurs in a vector. You could also use as.numeric(table(x_u_matched)).
-u[tab == max(tab)]  #max(tab) returns the maximum of tab, i.e. the value of tabulate(x_u_matched) with the most counts / which occurs most frequently. tab == max(tab) returns TRUE for the largest value (maximum), i.e. for the value with the most occurances, and FALSE for all other values. And finally, u[tab == max(tab)] subsets the vector u (the possible values) with the position that returns TRUE, i.e. the most frequent value. And this is the definition of the mode of a vector.
-
-# Stratified summaries (ISLR::Credit):
-summary(datc)
-median(datc$Income)
-tapply(datc$Income, datc$Gender, FUN = median)
-aggregate(Income ~ Gender, data = datc, FUN = median)
-aggregate(Income ~ Gender + Married, data = datc, FUN = median)
-tapply(datc$Income, list(datc$Gender, datc$Married), FUN = median)
-
-# Chi-squared & Fisher (mtcars example):
-mytab1 <- table(mtcars$cyl, mtcars$am)
-chisq.test(mytab1); fisher.test(mytab1)
-
-# Chi-squared (Credit example):
-mytab2 <- table(datc$Income_factor, datc$Married)
-chisq.test(mytab2)
-
-# ANOVA (linear models) & model comparison (nested):
-lm1 <- lm(mpg ~ wt + cyl + hp, data = mtcars)
-lm2 <- lm(mpg ~ wt + cyl, data = mtcars)
-anova(lm1, lm2)
-
-
-## ---------------------------------------------------------------
-## 9) Visualization (base R + lattice)
-## ---------------------------------------------------------------
-# Base scatterplots:
-plot(iris)  # matrix of pairwise plots
-plot(iris$Sepal.Length, iris$Petal.Width)
-plot(iris$Sepal.Length, iris$Petal.Width,
-     pch = 2, col = "darkblue", main = "Scatterplot",
-     ylab = "Petal Width", xlab = "Sepal Length", ylim = c(0,3), yaxs = "i")
-
-# Histograms:
-hist(iris$Sepal.Length)
-hist(iris$Sepal.Length, breaks = 20)
-
-# Density overlay added above in Section 3
-
-# Boxplots (base):
-boxplot(mtcars$mpg, main = "Boxplot of mpg") #Check ?boxplot for the parameters that you can add. For example:
-boxplot(mtcars$mpg, main = "Boxplot with subtitle", sub = "This is a subtitle", col = "red", log = "y", ylim=c(1,50))
-boxplot(mtcars$mpg, main = "Horizontal boxplot", horizontal = TRUE)
-boxplot(mpg ~ am, data = mtcars)
-
-# Lattice gallery (Credit):
-boxplot(dat_credit$Age, main = "Age (base boxplot)")
-boxplot(dat_credit$Age ~ dat_credit$Income_bin, main = "Age by Income_bin")
-boxplot(dat_credit$Age ~ dat_credit$Income_bin, width = c(0.5, 2))
-
-plot(dat_credit$Ethnicity)
-hist(dat_credit$Balance)
-hist(dat_credit$Rating, col = "blue")
-hist(dat_credit$Rating, breaks = 20)
-hist(dat_credit$Rating, nclass = 20) # similar to breaks for historical reasons
-
-densityplot(dat_credit$Rating)
-histogram(dat_credit$Rating)
-bwplot(dat_credit$Income)
-xyplot(Limit ~ Married, data = dat_credit)
-
-# QQ diagnostics:
-qqnorm(dat_credit$Balance); qqline(dat_credit$Balance)
-qqnorm(dat_credit$Age);     qqline(dat_credit$Age)
-qqplot(dat_credit$Balance, dat_credit$Age)  # two-sample QQ plot
-# qqplot() compares empirical quantiles of two numeric variables.
-# Use qqnorm(x) to compare a sample against the Normal distribution.
-
-# Helpful plotting resources:
-# https://intro2r.com/simple-base-r-plots.html
-# https://r-charts.com/base-r/line-types/
-# https://r-graph-gallery.com/
-# ===============================================================
-
-
-
-## ---------------------------------------------------------------
-## 9a) NEW FROM SECOND BEGINNER SCRIPT: Calling functions & namespaces
-## ---------------------------------------------------------------
-# A user-defined function can take a single value or a whole numeric vector:
+# The function works on one value or on a numeric vector because ^ is vectorized:
 square(4)
 square(4:6)
 numbers <- 4:6
 square(numbers)
 
-# This would produce an error because character text cannot be squared:
+# Quotation marks produce character text, so this would fail:
 # square("numbers")
 
-# Functions from add-on packages can be called explicitly as package::function.
-# This is especially useful if different packages contain functions with the same name.
+# package::function identifies exactly where an add-on function comes from.
 psych::describe(mtcars)
 
-# Hmisc also has a function named describe(). Install Hmisc once if needed:
-# install.packages("Hmisc")
+# Hmisc also contains a function named describe(). If Hmisc is installed:
 # Hmisc::describe(mtcars)
 
-# Using package::function avoids ambiguity and does not require library(package)
-# merely to call that one function.
+
+## ---------------------------------------------------------------
+## 10) Mean, median, statistical mode; grouped summaries; tests
+## ---------------------------------------------------------------
+
+# --- 10a) Mean and median ---
+dat_mtc <- mtcars
+mean(dat_mtc$mpg)
+median(dat_mtc$mpg)
+
+# Create one missing value on a COPY of mtcars:
+dat_mtc$disp[5] <- NA
+mean(dat_mtc$disp)                 # NA
+mean(dat_mtc$disp, na.rm = TRUE)   # ignore NA
+
+# Means for all columns:
+sapply(dat_mtc, mean)
+sapply(dat_mtc, mean, na.rm = TRUE)
+
+# --- 10b) Statistical mode ---
+# Important: base R's mode() function is about an object's storage mode; it is
+# NOT a function for calculating the statistical mode (most frequent value).
+
+# Version 1: return one mode. If there is a tie, which.max() returns the first.
+Mode_first <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+# Version 2: return all modes in case of a tie.
+find_modes <- function(x) {
+  ux <- unique(x)
+  counts <- tabulate(match(x, ux))
+  ux[counts == max(counts)]
+}
+
+vec <- c(-5, 3, 6, 3, 7)
+Mode_first(vec)
+find_modes(vec)
+median(vec)
+
+# Tie example:
+vec_tie <- c(3, 6, 3, 6, 7)
+Mode_first(vec_tie)   # only the first tied mode
+find_modes(vec_tie)   # both 3 and 6
+
+# Step-by-step decomposition using the small tie example:
+x <- vec_tie
+ux <- unique(x)
+ux
+
+matched_positions <- match(x, ux)
+matched_positions
+# match(x, ux) replaces every value in x by the position at which that value
+# appears in ux.
+
+counts <- tabulate(matched_positions)
+counts
+# tabulate() counts how often the integers 1, 2, 3, ... occur.
+
+max(counts)
+counts == max(counts)
+ux[counts == max(counts)]
+# The last line selects the value(s) whose count equals the largest count.
+
+# --- 10c) Grouped summaries ---
+tapply(dat_credit$Income, dat_credit$Gender, FUN = median)
+aggregate(Income ~ Gender, data = dat_credit, FUN = median)
+aggregate(Income ~ Gender + Married, data = dat_credit, FUN = median)
+tapply(dat_credit$Income,
+       list(dat_credit$Gender, dat_credit$Married),
+       FUN = median)
+
+# --- 10d) Chi-squared and Fisher's exact test ---
+mytab1 <- table(mtcars$cyl, mtcars$am)
+mytab1
+chisq.test(mytab1)
+# With small expected cell counts, chisq.test() may warn that the approximation
+# is inaccurate. Fisher's exact test is an alternative for small tables:
+fisher.test(mytab1)
+
+mytab2 <- table(dat_credit_vars$Income_factor, dat_credit_vars$Married)
+chisq.test(mytab2)
+
+# --- 10e) Nested linear models / ANOVA model comparison ---
+lm_small <- lm(mpg ~ wt + cyl, data = mtcars)
+lm_large <- lm(mpg ~ wt + cyl + hp, data = mtcars)
+anova(lm_small, lm_large)
 
 
-#Various plot types:
-x <- rnorm(500)
-y <- x + rnorm(500)
+## ---------------------------------------------------------------
+## 11) Visualization (base R + lattice)
+## ---------------------------------------------------------------
 
-par(mfrow = c(2, 3))
+# --- 11a) Scatterplots ---
+plot(dat_iris$Sepal.Length, dat_iris$Petal.Width)
+plot(
+  dat_iris$Sepal.Length,
+  dat_iris$Petal.Width,
+  pch = 2,
+  col = "darkblue",
+  main = "Scatterplot",
+  ylab = "Petal Width",
+  xlab = "Sepal Length",
+  ylim = c(0, 3),
+  yaxs = "i"
+)
 
-# Data
-my_ts <- ts(matrix(rnorm(500), nrow = 500, ncol = 1),
-              start = c(1950, 1), frequency = 12)
+# Pairwise scatterplots of all numeric iris variables:
+pairs(dat_iris[, 1:4], main = "Pairwise scatterplots")
+# plot(iris) is a shorter generic alternative, but pairs() makes the intention
+# more explicit for a beginner.
 
-my_dates <- seq(as.Date("2005/1/1"), by = "month", length = 50)
+# --- 11b) Histograms and density ---
+hist(dat_iris$Sepal.Length)
+hist(dat_iris$Sepal.Length, breaks = 20)
 
+hist(normdist, breaks = 20, freq = FALSE,
+     main = "Normal sample with density estimate")
+dens <- density(normdist)
+lines(dens)
+# freq = FALSE puts density rather than counts on the y-axis so that density()
+# can be overlaid on the histogram.
+
+# --- 11c) Barplots and boxplots ---
 my_factor <- factor(mtcars$cyl)
+barplot(table(my_factor), main = "Barplot of cylinder categories")
 
-square <- function(x){x^2}
+set.seed(1)
+random_y <- rnorm(nrow(mtcars))
+boxplot(
+  random_y ~ my_factor,
+  main = "Boxplot of a numeric variable by cylinder category",
+  xlab = "Number of cylinders",
+  ylab = "Random values"
+)
 
-# Scatterplot
-plot(x, y, main = "Scatterplot")
+# Generic plot() can choose methods automatically based on the object class.
+# These shortcuts work, but are less transparent than the explicit forms above:
+# plot(my_factor)
+# plot(my_factor, random_y)
 
-# Barplot
-plot(my_factor, main = "Barplot")
+boxplot(mtcars$mpg, main = "Boxplot of mpg")
+boxplot(
+  mtcars$mpg,
+  main = "Boxplot with subtitle",
+  sub = "This is a subtitle",
+  col = "red",
+  log = "y",
+  ylim = c(1, 50)
+)
+boxplot(mtcars$mpg, main = "Horizontal boxplot", horizontal = TRUE)
+boxplot(
+  mpg ~ am,
+  data = mtcars,
+  main = "mpg by transmission",
+  xlab = "am (0 = automatic, 1 = manual)",
+  ylab = "mpg"
+)
 
-# Boxplot
-plot(my_factor, rnorm(32), main = "Boxplot")
+# --- 11d) Credit graphics: base R and lattice ---
+boxplot(dat_credit$Age, main = "Age (base boxplot)")
+boxplot(dat_credit$Age ~ dat_credit_vars$Income_bin,
+        main = "Age by Income_bin")
+boxplot(dat_credit$Age ~ dat_credit_vars$Income_bin,
+        width = c(0.5, 2))
 
-# Time series plot
+barplot(table(dat_credit$Ethnicity), main = "Ethnicity")
+hist(dat_credit$Balance)
+hist(dat_credit$Rating, col = "blue")
+hist(dat_credit$Rating, breaks = 20)
+hist(dat_credit$Rating, nclass = 20)
+
+lattice::densityplot(~ Rating, data = dat_credit)
+lattice::histogram(~ Rating, data = dat_credit)
+lattice::bwplot(~ Income, data = dat_credit)
+lattice::xyplot(Limit ~ Married, data = dat_credit)
+
+# --- 11e) QQ diagnostics ---
+qqnorm(dat_credit$Balance)
+qqline(dat_credit$Balance)
+qqnorm(dat_credit$Age)
+qqline(dat_credit$Age)
+qqplot(dat_credit$Balance, dat_credit$Age)
+# qqnorm(x): sample quantiles vs theoretical Normal quantiles.
+# qqplot(x, y): empirical quantiles of one numeric variable vs another.
+
+# --- 11f) Time-series and date-based plots ---
+set.seed(1)
+my_ts <- ts(rnorm(120), start = c(2017, 1), frequency = 12)
 plot(my_ts, main = "Time series")
+# Because my_ts has class "ts", plot() uses a time-series-specific method.
 
-# Time-based plot
-plot(my_dates, rnorm(50), main = "Time based plot")
+my_dates <- seq(as.Date("2005-01-01"), by = "month", length.out = 50)
+plot(my_dates, rnorm(50),
+     main = "Date-based plot",
+     xlab = "Date",
+     ylab = "Random value")
+# Because x has class "Date", R formats the x-axis as dates.
 
-# Plot R function
-plot(square, 0, 10, main = "Plot a function")
-fun2 <- function(x){abs(x)}
+# --- 11g) Plotting a mathematical function ---
+# Beginner-friendly explicit version: create x values, calculate y values,
+# then plot one against the other.
+x_values <- seq(from = -5, to = 5, by = 0.1)
+y_values <- square(x_values)
 
-x_values <- seq(-5, 5, 0.1)
-y_values <- square(seq(-5, 5, 0.1))
-plot(x_values, y_values, main = "Plot a function", type="l")
-abline(h=10)
-abline(v=0, lty=2)
-       
-#see also: 
-#https://intro2r.com/simple-base-r-plots.html
-#https://r-charts.com/base-r/line-types/
-#https://r-graph-gallery.com/
+plot(
+  x_values,
+  y_values,
+  main = "square(x) = x^2",
+  xlab = "x",
+  ylab = "square(x)",
+  type = "l"
+)
+abline(h = 10)
+abline(v = 0, lty = 2)
+
+# Shortcut after the transparent version:
+# plot() is generic. Because its first argument is a function, R dispatches to
+# plot.function(), which creates evaluation points internally.
+plot(square, from = 0, to = 10, n = 101,
+     main = "Function plotted via plot.function()")
+# n = 101 means that the function is evaluated at 101 x values and the points
+# are connected. The curve therefore LOOKS continuous; it is not evaluated at
+# infinitely many points.
+
+# The shorthand plot(square, 0, 10) also works, but positional matching hides
+# what 0 and 10 mean. Named from= and to= arguments are much clearer.
+
+# Discrete evaluation points instead of a connected line:
+plot(square, from = 0, to = 10, n = 11, type = "p",
+     main = "Function evaluated at 11 points")
+
+# Helpful plotting resources:
+# https://intro2r.com/simple-base-r-plots.html
+# https://r-charts.com/base-r/line-types/
+# https://r-graph-gallery.com/
+
+
+## ---------------------------------------------------------------
+## 12) Working directory and file I/O
+## ---------------------------------------------------------------
+
+getwd()                       # current working directory
+# setwd("...")               # change it deliberately if needed
+
+# IMPORTANT: write.csv() and save() CREATE files. To keep this teaching script
+# from cluttering your working directory, the examples below use tempdir().
+# Replace tempdir() with getwd() or your own path when you actually want to keep
+# the files.
+
+demo_csv <- file.path(tempdir(), "example_data.csv")
+write.csv(mtcars, file = demo_csv, row.names = FALSE)
+d_loaded <- read.csv(demo_csv)
+head(d_loaded)
+
+# save() stores R objects; load() loads the stored object(s) into the workspace.
+a_list <- list(answer = 42, data = iris, comment = "whatever")
+demo_rdata <- file.path(tempdir(), "example_object.RData")
+save(a_list, file = demo_rdata)
+
+rm(a_list)                    # remove it so the effect of load() is visible
+exists("a_list")
+load(demo_rdata)
+exists("a_list")
+a_list$answer
+
+# Be careful with arbitrary .RData files: load() may create several objects and
+# can overwrite objects with the same names in your current workspace.
+
+
+## ---------------------------------------------------------------
+## 13) Arrays / higher-dimensional objects
+## ---------------------------------------------------------------
+
+# Arrays generalize vector/matrix indexing to more than two dimensions.
+a_array <- array(1:12, dim = c(3, 2, 2))
+a_array
+dim(a_array)
+
+# Three-dimensional indexing: [row, column, layer]
+a_array[, , 1]                # first layer
+a_array[1, , ]                # first row across columns and layers
+
+# This topic is deliberately placed near the end: vector and data-frame
+# subsetting from Section 1 should be understood first.
