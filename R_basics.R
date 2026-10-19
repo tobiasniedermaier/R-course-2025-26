@@ -732,7 +732,31 @@ a_list$answer
 
 
 ## ---------------------------------------------------------------
-## 13) Arrays / higher-dimensional objects
+## 13) Merging data sets
+## ---------------------------------------------------------------
+
+#Let's first create a fake data set with a few variables:
+dat1 <- data.frame(ID=1001:1100, height=rnorm(n=100, mean=170, sd=20)) #args(rnorm)
+dat2 <- data.frame(ID=1100:1001, smoking=rbinom(n=100, size=1, prob=0.25)) #args(rbinom)
+
+dat_merged1 <- merge(dat1, dat2, by="ID")
+
+#What if the ID vars are named differently?
+
+dat1 <- data.frame(ID=1001:1100, height=rnorm(n=100, mean=170, sd=20)) #args(rnorm)
+dat2 <- data.frame(id=1100:1001, smoking=rbinom(n=100, size=1, prob=0.25)) #args(rbinom)
+
+dat_merged2 <- merge(dat1, dat2, by.x="ID", by.y="id")
+
+#What if the data sets are not sorted in the same way?
+dat1_sorted <- dat1[order(dat1$height),] #sorted by height
+dat_merged3 <- merge(dat1, dat2, by.x="ID", by.y="id")
+identical(dat_merged2, dat_merged3) #It doesn't matter! There is no need to sort a data set before merging.
+
+
+
+## ---------------------------------------------------------------
+## 14) Arrays / higher-dimensional objects
 ## ---------------------------------------------------------------
 
 # Arrays generalize vector/matrix indexing to more than two dimensions.
