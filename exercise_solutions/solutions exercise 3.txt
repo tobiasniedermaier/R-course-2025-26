@@ -98,27 +98,30 @@ boxplot(dat$weight ~ dat$Time)
 boxplot(dat$weight ~ dat$Diet)
 
 #6. Do the same, as before, but now combine the three variables: Use Time on the x-axis, weight on the y-axis and use Diet as a fill argument.
-cols <- c("skyblue", "tomato", "palegreen3", "gold")  # eine Farbe je Diet
-boxplot(weight ~ Time * Diet, data = dat, col = rep(cols, times = nlevels(dat$Time)), xlab = "Time", ylab = "Weight", las = 2)
+cols <- c("skyblue", "tomato", "palegreen3", "gold")  # one color per diet
+boxplot(weight ~ Diet * Time, data = dat, 
+	col = rep(cols, times = nlevels(dat$Time)), 
+	xlab = "Time", ylab = "Weight", las = 2)
 legend("topleft", title = "Diet", fill = cols, legend = levels(dat$Diet), bty = "n")
 
+
+#Or nicer:
+cols <- c("skyblue", "tomato", "palegreen3", "gold")
+
+boxplot(weight ~ Diet + Time, data = dat,
+        col = cols,
+        xaxt = "n",
+        xlab = "Time",
+        ylab = "Weight")
+
+axis(1, at = seq(2.5, by = 4, length.out = nlevels(dat$Time)),
+     labels = levels(dat$Time))
+
+legend("topleft", title = "Diet",
+       legend = levels(dat$Diet),
+       fill = cols, bty = "n")
+########################
+
 #Or with ggplot2:
-ggplot(dat, aes(Time, weight, fill = Diet)) + geom_boxplot()
-
-#Add color as an additional aesthetic mapping for the variable Tree:
-ggplot(Orange, aes(age, circumference, color = Tree)) + geom_point()
-
-#Or with lattice:
-library(lattice)
-
-xyplot(circumference ~ age,
-       data   = Orange,
-       groups = Tree,                  # colors according to tree
-       pch    = 16,                    # "full" dots
-       cex    = 0.8,
-       auto.key = list(points = TRUE,  # automatically create legend
-                       lines  = FALSE, #TRUE would create a line plot. Not useful here.
-                       title  = "Tree",
-                       space  = "right"), #Or: "left", "top", "bottom". Ginge auch mit Koordinaten.
-       xlab = "Age",
-       ylab = "Circumference")
+library(ggplot2)
+ggplot(dat, aes(Time, weight, fill = Diet)) + geom_boxplot() + theme_bw()
