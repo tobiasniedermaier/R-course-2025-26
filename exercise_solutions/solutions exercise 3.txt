@@ -97,16 +97,20 @@ boxplot(dat$weight ~ dat$Time)
 #5. Plot the weight as boxplots for the different types of Diet.
 boxplot(dat$weight ~ dat$Diet)
 
+######################
 #6. Do the same, as before, but now combine the three variables: Use Time on the x-axis, weight on the y-axis and use Diet as a fill argument.
-cols <- c("skyblue", "tomato", "palegreen3", "gold")  # one color per diet
+
+# Colorblind-friendly colors (Okabe-Ito palette):
+cols <- c("#0072B2", "#E69F00", "#009E73", "#CC79A7")  # one color per diet
+
 boxplot(weight ~ Diet * Time, data = dat, 
-	col = rep(cols, times = nlevels(dat$Time)), 
+	col = cols, 
 	xlab = "Time", ylab = "Weight", las = 2)
 legend("topleft", title = "Diet", fill = cols, legend = levels(dat$Diet), bty = "n")
 
 
 #Or nicer:
-cols <- c("skyblue", "tomato", "palegreen3", "gold")
+cols <- c("#0072B2", "#E69F00", "#009E73", "#CC79A7")
 
 boxplot(weight ~ Diet + Time, data = dat,
         col = cols,
@@ -124,4 +128,4 @@ legend("topleft", title = "Diet",
 
 #Or with ggplot2:
 library(ggplot2)
-ggplot(dat, aes(Time, weight, fill = Diet)) + geom_boxplot() + theme_bw()
+ggplot(dat, aes(Time, weight, fill = Diet)) + geom_boxplot() + scale_fill_manual(values = cols) + theme_bw()
