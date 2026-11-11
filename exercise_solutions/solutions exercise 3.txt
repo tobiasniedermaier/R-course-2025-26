@@ -12,8 +12,7 @@ palette_colors <- c("#9A241B",  # Dark red
           "#F4C91E",  # Yellow
           "#8BB3CB",  # Light blue
           "#1C078E")  # Dark blue
-palette_colors #Or:
-Orange$Tree |> unique() |> length() |> palette_colors ()
+palette_colors
 
 #2. Plot the two variables age and circumference against each other using a scatter plot
 #3. Add color as an additional aesthetic mapping for the variable Tree.
