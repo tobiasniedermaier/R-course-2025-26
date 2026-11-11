@@ -101,7 +101,11 @@ boxplot(dat$weight ~ dat$Diet)
 #6. Do the same, as before, but now combine the three variables: Use Time on the x-axis, weight on the y-axis and use Diet as a fill argument.
 
 # Colorblind-friendly colors (Okabe-Ito palette):
-cols <- c("#0072B2", "#E69F00", "#009E73", "#CC79A7")  # one color per diet
+cols <- c("#9A241B",  # Dark red
+          "#F4C91E",  # Yellow
+          "#8BB3CB",  # Light blue
+          "#1C078E")  # Dark blue
+# one color per diet
 
 boxplot(weight ~ Diet * Time, data = dat, 
 	col = cols, 
@@ -110,7 +114,10 @@ legend("topleft", title = "Diet", fill = cols, legend = levels(dat$Diet), bty = 
 
 
 #Or nicer:
-cols <- c("#0072B2", "#E69F00", "#009E73", "#CC79A7")
+cols <- c("#9A241B",  # Dark red
+          "#F4C91E",  # Yellow
+          "#8BB3CB",  # Light blue
+          "#1C078E")  # Dark blue
 
 boxplot(weight ~ Diet + Time, data = dat,
         col = cols,
