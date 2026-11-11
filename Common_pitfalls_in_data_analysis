@@ -1,0 +1,39 @@
+Common pitfalls or DON’Ts in R programming and data analysis in general:
+
+1.	Forgetting to look at the data before doing any analysis (plots, outlier checks, variable coding, data types etc.).
+
+2.	Ignoring missing data or handling them incorrectly.
+
+3.	Being negligent in data plausibility checks and data cleaning.
+
+4.	Applying statistical models without checking relevant model assumptions, especially when violations could seriously affect the results.
+
+5.	Ignoring warnings or even errors in the output.
+
+6.	Applying functions to objects of the wrong class.
+
+7.	Overwriting existing variables or other objects by accident.
+
+8.	Using AI-generated (or elsewhere published) code that you do not understand.
+
+9.	Relying on AI for code generation and debugging instead of learning how to write code and troubleshoot problems independently.
+
+10.	Assuming that everyone working with your script has the same packages installed.
+
+11.	Relying on (too) many niche third-party packages that may become unavailable or incompatible in the future.
+
+12.	Over-optimizing code for negligible improvements in speed or code length.
+
+13.	Not optimizing code that unnecessarily takes forever to run.
+
+14.	Hard-coding data or other parameters that might change across datasets or computing environments (e.g., absolute file paths, number of available CPU cores in parallelization).
+
+15.	Not commenting code or commenting in a suboptimal way (not explaining what the code does and why it is done – unless it is obvious.)
+
+16.	Producing unstructured “spaghetti code”.
+
+17.	Copy-pasting long sequences of code just to repeat an analysis for a different data set or a different variable in the data set. (Use vectorization [where appropriate], for-loops or functions instead.)
+
+18.	Applying advanced concepts that you do not need and maybe do not even understand, just because they are “cool” or recommended by some nerds (e.g. closures / function-generating functions, S4 and R6 classes, active handling of environments, active bindings).
+
+19.	Failing to check whether the results of your analysis are plausible.
