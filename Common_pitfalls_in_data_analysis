@@ -26,7 +26,7 @@ Common pitfalls or DON’Ts in R programming and data analysis in general:
 
 13.	Not optimizing code that unnecessarily takes forever to run.
 
-14.	Hard-coding data or other parameters that might change across datasets or computing environments (e.g., absolute file paths, number of available CPU cores in parallelization).
+14.	Hard-coding data or other parameters that might change across datasets or computing environments (e.g., absolute file paths, number of available CPU cores in parallelization, intermediate results).
 
 15.	Not commenting code or commenting in a suboptimal way (not explaining what the code does and why it is done – unless it is obvious.)
 
@@ -37,3 +37,4 @@ Common pitfalls or DON’Ts in R programming and data analysis in general:
 18.	Applying advanced concepts that you do not need and maybe do not even understand, just because they are “cool” or recommended by some nerds (e.g. closures / function-generating functions, S4 and R6 classes, active handling of environments, active bindings).
 
 19.	Failing to check whether the results of your analysis are plausible.
+
