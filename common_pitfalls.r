@@ -2,17 +2,44 @@
 # Common pitfalls or DON’Ts in R programming and data analysis in general:
 
 # 1.	Forgetting to look at the data before doing any analysis (plots, outlier checks, variable coding, data types etc.).
-#(To be added.)
+set.seed(1)
+dat <- data.frame(age=runif(1000, min=50, max=75), sex=runif(1000, min=0, max=1), bmi=rnorm(1000, mean=22, sd=5))
+summary(lm(bmi ~ age + sex, data=dat)) #This gives the null association that we would expect if we create uncorrelated random variables.
+#The problem is that - at a first glance - the results look plausible, although they are actually not.
+
+quantile(dat$bmi)
+quantile(dat$bmi, probs=seq(0,1,0.01)) #I would say that the bottom 7% of the BMI distribution are quite impossible or at least highly suspicious.
+
+summary(dat) #Actually, this should always be the first check that you do.
+#But also, you should never forget to do scatter plots of the data!
+
+plot(dat$age, dat$bmi)
+plot(dat$age, dat$sex) #summary(dat) already told you that the mean is 0.49. This is not suspicious because it should simply reflect the proportion of men or women (depending how the variable is coded.)
+#But now you can see that something is really wrong with the variable. (Or at least, the variable does not represent what you probably thought it would represent.)
+# We actually have values other than 0  and 1 in the variable, which does not make sense.
+# For a simulation where we create data, we should have chosen rbinom(1000, 1, 0.5).
+
+set.seed(1)
+dat <- data.frame(age=runif(1000, min=50, max=75), sex=rbinom(1000, 1, 0.5), bmi=rnorm(1000, mean=22, sd=5))
+summary(lm(bmi ~ age + sex, data=dat))
+#For this simulation, we ASSUME that BMI values <14 are measurement errors. In real data, extreme values must be verified before being recoded.
+
+dat[dat$bmi<14,]$bmi <- NA
+summary(lm(bmi ~ age + sex, data=dat))
+plot(dat$age, dat$sex)
+boxplot(dat$age ~ dat$sex) #This looks better!
 
 #======================================================================
 
 # 2.	Ignoring missing data or handling them incorrectly.
 set.seed(123)
 dat <- data.frame(weight = rnorm(n=1000, mean=75, sd=10), age=rnorm(1000, mean=65, sd=9))
+dat_complete <- dat #Keep the original values for comparison in this simulation.
 summary(dat)
 #Let's introduce some missings:
 # plogis() converts its input into a probability between 0 and 1.
-# The probability that weight is missing increases with actual weight.
+# The probability that weight is missing increases with the (later unobserved) weight.
+# This deliberately creates an MNAR mechanism: missingness depends on the missing value itself.
 #
 p_missing_weight <- plogis((dat$weight - 75))
 weight_missing <- runif(n=1000) < p_missing_weight
@@ -24,6 +51,9 @@ dat$age[age_missing] <- NA
 
 summary(dat)
 #Note that around 50% of the weight and age observations are missing. But not necessarily in the same participants!
+#The observed mean weight is lower than the actual mean in the simulated complete dataset:
+mean(dat_complete$weight)
+mean(dat$weight, na.rm=TRUE)
 
 dat$outcome <- rbinom(1000, 1, 0.2)
 glm(outcome ~ age, data=dat, family=binomial) #522 missings
@@ -34,10 +64,10 @@ glm(outcome ~ age + weight, data=dat, family=binomial) #774 missings
 
 #Most common solutions:
 #1.) Restrict your analysis to the predictors you actually need (easy way).
-#2.) If possible, use surrogate predictors that have fewer missings (rarely available).
+#2.) Consider suitable additional/auxiliary information if available. Do not replace important predictors with weaker proxies without considering the consequences.
 #3.) Multiple imputation is often an appropriate method for handling missing data. 
 
-#Standard multiple imputation methods generally assume that data are Missing At Random (MAR). However, multiple imputation can also be applied to Missing Not At Random (MNAR) data if the missingness mechanism is explicitly accounted for. Since this mechanism is usually unknown, sensitivity analyses are recommended to assess the robustness of the results.
+#Standard multiple imputation methods generally rely on a Missing At Random (MAR) assumption, conditional on variables in the imputation model. The example above is MNAR by construction. MNAR requires additional assumptions/models; sensitivity analyses are important because the missingness mechanism cannot generally be identified from observed data alone.
 
 
 #======================================================================
@@ -52,7 +82,7 @@ hist(dat$height)
 summary(dat)
 quantile(dat$height, probs=seq(from=0, to=1, by=0.01))
 dat[dat$height>200,] #Not very likely, but possible. Should be verified and NOT automatically set to NA.
-dat[dat$height>250,] #Almost certainly a data error. Only one person (alive) is that tall, and only around a dozen people were ever recorded to have a height >250 cm. Check the original data if possible; otherwise set to NA. Document what values you recode and why. Always keep a copy of the original data set!
+dat[dat$height>250,] #Extremely implausible and very likely a data error. Check the original data if possible; otherwise consider recoding as NA with explicit justification. Document every recoding and keep the original dataset!
 dat$height_backup <- dat$height
 dat[dat$height>250,]$height <- NA
 dat[,c("height", "height_backup")]
@@ -72,6 +102,8 @@ plot(x, y, main = "Quadratic relationship with constant error variance")
 lm1 <- lm(y ~ x)
 summary(lm1)
 plot(lm1, 1)
+#Note: With x symmetric around zero, x and x^2 are uncorrelated. Thus the
+#coefficient of x may be near zero even though the model is seriously misspecified.
 #Compare this with a correctly specified model:
 lm2 <- lm(y ~ x + I(x^2))
 summary(lm2)
@@ -83,11 +115,48 @@ plot(lm2, 1)
 # 5.	Ignoring warnings or even errors in the output.
 #(To be added.)
 
+## Data separation:
+
+dat <- data.frame(smo=rep(c(1,0), each=500), sex=rep(c("men","women"), each=500))
+separated_model <- glm(smo ~ sex, data=dat, family="binomial")
+summary(separated_model)
+#Complete separation: smoking status is perfectly determined by sex in this sample.
+#The maximum-likelihood estimate of the corresponding logistic coefficient is not finite
+#(the coefficient tends to +/- infinity); the finite numbers printed by glm() are unreliable.
+#This is a warning sign, not evidence that the association is absent or unknown.
+
+#Errors are "harder to ignore", because an R function will stop at the point where an error occured.
+
 
 #======================================================================
 
 # 6.	Applying functions to objects of the wrong class.
-#(To be added.)
+
+mean(c("1","5","7","9")) #Returns NA with a warning (not an error).
+mean(c(1,5,7,9)) #OK.
+mean(as.numeric(c("1","5","7","9"))) #OK.
+
+#Beware: as.numeric() on a factor returns internal level codes, NOT its labels.
+as.numeric(factor(c("10", "20", "30"))) #1, 2, 3, NOT 10, 20, 30.
+as.numeric(as.character(factor(c("10", "20", "30")))) #10, 20, 30.
+
+plot.ts(mtcars$mpg) #Works, but probably not what you wanted.
+
+mydata <- list(mtcars[1:15,], mtcars[16:32,])
+class(mydata)
+mydata + 1 #Won't work.
+
+mydata[[1]] + 1 #Works.
+mydata[[2]] + 1 #Works.
+
+lapply(mydata, "+", 1)
+
+hist(LETTERS) #Won't work.
+plot(LETTERS) #Won't work.
+
+hist(as.numeric(factor(LETTERS))) #Works.
+plot(factor(LETTERS)) #Works.
+#Think about it: Why does this work? And does it make sense? The numbers from factor(LETTERS) are arbitrary level codes.
 
 
 #======================================================================
@@ -120,13 +189,18 @@ lrtest(lm1, lm2) #The likelihood ratio test still runs without an error or warni
 #======================================================================
 
 # 10.	Assuming that everyone working with your script has the same packages installed.
-#Solution: Posit Public Package Manager (P3M). Formerly known as RStudio Package Manager, this free service hosts daily CRAN snapshots just like MRAN (the now defunct Microsoft R Open Network) did. You can freeze your package versions by setting a dated repository URL in R (e.g., options(repos = c(CRAN = "https://packagemanager.posit.co/cran/2026-11-10"))).
+#Check which packages your script requires and whether they are installed, e.g.:
+requireNamespace("psych", quietly=TRUE) #If FALSE: install.packages("psych") (internet required).
+#A dated repository snapshot (e.g. Posit Public Package Manager) helps with version
+#reproducibility for NEW installations; it does NOT install missing packages automatically
+#or change packages already installed. For project-specific version locking, consider renv.
+#Example dated repository: options(repos=c(CRAN="https://packagemanager.posit.co/cran/2026-11-10"))
 
 
 #======================================================================
 
 # 11.	Relying on (too) many niche third-party packages that may become unavailable or incompatible in the future.
-#Availability is not the main problem because R packages are archived at https://cran.r-project.org/src/contrib/Archive/ even if the package was removed from CRAN. However, it requires extra knowledge and effort to get a script to run that requires an obscure package. Also, packages may be conflicting with other functions in R (from Base R or other packages), so keep them to a minimum. (I.e., don't simply load all packages you know at the beginning of your script. Load only the packages you need.) If a package overwrites a function from a different package, you will receive a note ("The following object(s) was masked by 'package:xyz':"). If you really need functions from different packages that use exactly the same name, you can assign them to different objects. Example:
+#Many older package versions remain available from https://cran.r-project.org/src/contrib/Archive/, but installing archived packages can be difficult (e.g., incompatible dependencies). Avoid unnecessary dependencies. Packages may also MASK functions with the same name from previously loaded packages (they do not overwrite the original function). Load only what you need. If both functions are useful, call them explicitly by package name. Example:
 
 #bad practise:
 library(Hmisc)
@@ -321,7 +395,7 @@ t(sapply(mtcars[, myvars], function(x) {c(mean = mean(x), sd = sd(x))}))
 list_output <- lapply(mtcars[,c("cyl", "hp", "wt", "am", "mpg")], function(x){data.frame(mean(x), sd(x))})
 do.call("rbind", list_output)
 
-## Probably the best solution:
+## Convenient when you also want further descriptive statistics (but requires an extra package):
 #Make sure you have the "psych" package installed: install.packages("psych"); library(psych)
 psych::describe(mtcars[,c("cyl", "hp", "wt", "am", "mpg")]) 
 psych::describe(mtcars[,c("cyl", "hp", "wt", "am", "mpg")])[,c("mean", "sd")] #If you really only need mean+sd.
@@ -329,22 +403,22 @@ psych::describe(mtcars[,c("cyl", "hp", "wt", "am", "mpg")])[,c("mean", "sd")] #I
 
 #======================================================================
 
-# 18.	Applying advanced concepts that you do not need and maybe do not even understand, just because they are “cool” or recommended by some nerds (e.g. closures / function-generating functions / currying, S4 and R6 classes, active handling of environments, active bindings).
+# 18.	Applying advanced concepts that you do not need and maybe do not even understand, just because they are “cool” or recommended by some nerds (e.g. closures / function-generating functions, S4 and R6 classes, active handling of environments, active bindings).
 
-curried_function <- function(x){
+function_generator <- function(x){
 	function(y){
 		x(y)
 		}
 }
-curried_function(mean)(c(3, 4, 5, 5, 7))
+function_generator(mean)(c(3, 4, 5, 5, 7))
 
 #Looks really cool, right?
 
-#A "curried" function is basically a function-generating function. Broken down for demonstration:
-generated_mean_function <- curried_function(x=mean)
+#This is a function-generating function (and an example of a closure), NOT currying in the strict sense. Broken down for demonstration:
+generated_mean_function <- function_generator(x=mean)
 generated_mean_function(c(3, 4, 5, 5, 7))
 
-generated_sd_function <- curried_function(x=sd)
+generated_sd_function <- function_generator(x=sd)
 generated_sd_function(c(3, 4, 5, 5, 7))
 
 #It actually is pretty cool.
@@ -358,4 +432,99 @@ sd(c(3, 4, 5, 5, 7))
 #======================================================================
 
 # 19.	Failing to check whether the results of your analysis are plausible.
-#(To be added.)
+
+#This is not so much a programming question but rather an epidemiologic question. With your epidemiological thinking and skills, you should be able to figure out if a result makes sense or if it is completely implausible.
+
+#For example, suppose a Cox regression suggests that aspirin users have a higher CVD hazard.
+#Possible explanations include:
+
+#- Incorrect event coding: For example, the event indicator was coded as 0=event and 1=no event,
+#  but the analysis treats 1 as an event.
+
+#- Confounding: Aspirin users may be older or have more cardiovascular risk factors than non-users;
+#  omitting or inadequately controlling for these variables can distort the association.
+
+#- Confounding by indication: People at higher baseline cardiovascular risk are more likely to be
+#  prescribed aspirin. They might remain at higher risk even if aspirin has a protective effect.
+
+#- Selection bias / informative censoring: People at higher CVD risk may be disproportionately lost
+#  to follow-up, violating an assumption needed for standard survival analysis.
+
+#- Exposure misclassification or non-adherence: Prescribed aspirin use may differ from actual use.
+#  A binary yes/no variable also cannot capture different doses or exposure histories.
+
+#- Functional-form misspecification: The dose-response relationship may be nonlinear, so including
+#  aspirin dose as a single linear term may be inadequate. Omitted nonlinear terms can bias the
+#  estimated coefficient; this is not automatically residual confounding.
+
+#- Residual confounding: For example, socioeconomic status could affect both aspirin use and CVD
+#  risk. If SES is omitted, measured too crudely, or inadequately modeled, confounding may remain.
+
+#- Competing risks: If aspirin users have a lower risk of death from other causes, more of them may
+#  survive long enough to develop CVD. This can increase the cumulative incidence of CVD even if the
+#  cause-specific CVD hazard is unchanged. This is not necessarily bias: interpret the estimand.
+
+#- And many more!
+
+
+#======================================================================
+
+# 20. Merging datasets without checking the join keys and the resulting observations.
+
+patients <- data.frame(id=1:4, age=c(50, 60, 70, 80))
+lab <- data.frame(id=c(1, 2, 2, 4), crp=c(2, 5, 9, 1))
+
+merged_wrong <- merge(patients, lab, by="id") #Default: inner join; matches all rows with the same id.
+merged_wrong
+nrow(patients)
+nrow(merged_wrong) #Both are 4! The row count alone does not reveal the problem.
+
+#But patient 3 has disappeared, and patient 2 appears twice:
+setdiff(patients$id, merged_wrong$id)
+merged_wrong$id[duplicated(merged_wrong$id)]
+
+#Always check the expected relationship between keys BEFORE merging:
+any(duplicated(patients$id)) #FALSE
+any(duplicated(lab$id))      #TRUE: two lab rows for patient 2.
+
+#If the intended structure is one row per patient, this merge is wrong.
+#Repeated lab measurements might be valid, but then the one-to-many merge must be intentional.
+#Do not simply discard duplicate rows or fabricate values to force unique IDs.
+#Also check which observations are lost in an inner join and whether row order changes.
+#Using all.x=TRUE preserves unmatched patients but DOES NOT solve duplicated keys.
+
+
+#======================================================================
+
+# 21. Adjusting for inappropriate variables (overadjustment and collider bias).
+
+## Example A: Adjusting for a mediator, although the TOTAL effect is of interest.
+#Causal structure: exposure -> mediator -> outcome, plus exposure -> outcome.
+set.seed(123)
+n <- 3000
+exposure <- rbinom(n, 1, 0.5)
+mediator <- exposure + rnorm(n)
+outcome <- 0.5*exposure + 2*mediator + rnorm(n)
+dat <- data.frame(exposure, mediator, outcome)
+
+coef(lm(outcome ~ exposure, data=dat))["exposure"]             #Approx. 2.5: total effect.
+coef(lm(outcome ~ exposure + mediator, data=dat))["exposure"]  #Approx. 0.5: direct effect.
+
+#Adjusting for a mediator is not always wrong! It is wrong if your target is the total effect.
+#The adjusted model answers a different question, even though both regressions run normally.
+
+## Example B: Conditioning on a collider can CREATE a spurious association.
+#Causal structure: exposure -> collider <- U -> outcome.
+set.seed(456)
+n <- 3000
+exposure <- rnorm(n)
+u <- rnorm(n) #Unobserved cause of the outcome.
+collider <- exposure + u + rnorm(n)
+outcome <- u + rnorm(n)
+dat <- data.frame(exposure, collider, outcome)
+
+coef(lm(outcome ~ exposure, data=dat))["exposure"]              #Approx. 0: no effect.
+coef(lm(outcome ~ exposure + collider, data=dat))["exposure"]   #Spurious association!
+
+#LESSON: Adding more covariates does not automatically improve a regression model.
+#Covariate selection should depend on the causal question, not just statistical significance.
