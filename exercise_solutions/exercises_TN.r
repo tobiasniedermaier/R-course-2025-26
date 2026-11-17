@@ -399,7 +399,7 @@ hist(log(dat$hdl), breaks=15)
 dat$log_hdl <- log(dat$hdl)
 hist(dat$log_hdl, breaks=15)
 
-dat$diab_lft <- factor(dat$diab_lft, levels = c(0,1,2), labels = c("None","Prediabetes","Diabetes"))
+
 boxplot(dat$rr_sys ~ dat$diab_lft)
 boxplot(rr_sys ~ diab_lft, data=dat)
 
