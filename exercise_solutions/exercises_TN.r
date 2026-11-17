@@ -335,6 +335,8 @@ dat$milk_month <- as.factor(dat$milk_month)
 
 summary(dat[,vars])
 
+vars <- Cs(hivpos, srhgnrl, srphbad_prv30d, srmhbad_prv30d, adlimp_prv30d, educ, martlst, male, ethnic, increl, asthma_ever, asthma_now, ovrwght_ever, arthrit_ever, stroke_ever, livdis_ever, cbronch_now, livdis_now, cancer_ever, rel_heartdis, rel_asthma, rel_diab, heartdis_ever, lungpath_ever, diab_lft, jobstat_lwk, wrkt_irreg, workpollut, sleep_probl, cannab_ever, harddrg_ever, smokstat, age.cat, smoke_bin, bmi_cat, age_bin)
+
 dat[,vars] <- lapply(dat[,vars], as.factor)
 
 #4. How many women and how many men are there in your data set?
