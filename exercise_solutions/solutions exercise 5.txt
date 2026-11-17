@@ -34,7 +34,14 @@ summary(mod1)
 library(MASS)
 mod2 <- stepAIC(mod1) #default for direction is "backward"
 mod3 <- stepAIC(mod1, direction="backward") #same!
-mod4 <- stepAIC(mod1, direction="forward")
+
+mod0 <- lm(rr_sys ~ 1, data=complete.data)
+
+mod4 <- stepAIC(
+  mod0,
+  scope=list(lower=~1, upper=formula(mod1)),
+  direction="forward"
+)
 
 summary(mod2)
 summary(mod4)
