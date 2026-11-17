@@ -213,12 +213,7 @@ dat$smokebin <- as.factor(dat$smokebin)
 #4.9 Do you expect smokers to have a higher cancer prevalence than non-smokers? Test if there is a significant difference in cancer prevalence between smokers and non-smokers (using the variable from before). If so, which group has a higher prevalence? Did you get the result you expected?
 prop.table(table(dat[,c("cancer_ever","smokebin")]), margin=2)
 dat$cancer_ever <- factor(dat$cancer_ever, levels=c(TRUE, FALSE))
-prop.test(table(dat$smoke_bin, dat$cancer_ever)) #Ist aus irgendeinem Grund "verdreht", d.h. Prävalenz vermeintlich 86.3% vs. 94.1% und nicht 13.7% und 5.9%. Keine Ahnung, warum.
-#-> Strangely, the cancer prevalence is higher among non-smokers than among smokers. Possible explanations:
-#1.) Confounding by age!
-#2.) Competing risks: A smoker who dies early from CVD cannot get cancer anymore.
-#3.) Accelerated cancer death: Smoking is an adverse factor regarding prognosis. Given that both a smoker and a non-smoker get the same cancer, the smoker is expected to die faster. Thus, there are fewer prevalent cancer cases. Incidence would be a better measure than prevalence.
-#4.) "Cancer" is very heterogeneous. Some develop slowly and are not very deadly (e.g. most skin cancer types or thyroid cancer), others develop very fast and kill fast (e.g. lung cancer, esp. small-cell lung cancer). Maybe the types of cancers among the smokers tend to be more of the fast-developing and deadly type.
+prop.test(table(dat$smoke_bin, dat$cancer_ever))
 
 #4.10 Do the same test in the subgroup of people who are between 20 and 49 years old. What do you see now? How can you explain the results?
 
