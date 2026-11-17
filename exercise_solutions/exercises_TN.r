@@ -524,7 +524,7 @@ chisq.test(table(dat[,c("heartdis_ever","sex")]))
 fisher.test(table(dat[,c("heartdis_ever","sex")]))
 prop.test(table(dat[,c("heartdis_ever","sex")]))
 prop.test(table(dat[,c("sex","heartdis_ever")]))
-#Ergibt alles dieselben p-Werte.
+#Ergibt alles dieselben p-Werte. (In diesem Fall, nicht grundsätzlich! chisq.test und prop.test liefern dieselben p-Werte, fisher.test nicht unbedingt.)
 prop.test(table(dat$sex, dat$heartdis_ever)) #alternative Syntax.
 
 #4.8 Turn the variable smokstat into a binary variable (put the non-smokers and the people who almost never smoked into one group).
