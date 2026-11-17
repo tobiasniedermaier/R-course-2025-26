@@ -51,6 +51,7 @@ summary(mod4)
 # 1. Analyze the relationship between lifetime diagnosis of cancer and exposure to pollutants, using the categorized age variable (Note: No information on pollutant exposure was collected from participants aged 80+, so these cannot be included in the analysis). Does the adjustment for age change the picture? Interpret the model coeﬀ icients including the intercept.
 
 dat$age_cat <- dat$age.cat <- cut(dat$age, c(0, 18, 35, 50, 65, 80, 100))
+dat$cancer_ever <- relevel(dat$cancer_ever, ref="FALSE")
 
 mylogreg1 <- glm(cancer_ever ~ workpollut, data=dat, family="binomial")
 summary(mylogreg1)
