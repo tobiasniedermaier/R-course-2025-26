@@ -119,7 +119,7 @@ write.csv2(df1, file="mydf.csv", row.names=FALSE)
 getwd()
 
 #11. Load the data set into R as a new object df2 and compare it with the original one df1. What is the problem here?
-df2 <- read.csv2("mydf.csv") #check ?read.csv2 for more information on the function and how to use it. For example, you can specify if the csv file has a header or not (=if the first row contains the variable names or not.) and how the variables are separated (sep="," for comma-separated values, but it might also be ";" or " " or anything else). If the data set is not huge, I recommend opening it first with a text editor of your choice so that you see which separator is used. Otherwise, try it with "," or ";" and check how R interprets the data. If you see something like (for example) "1.5,apple,4.5,7.7,green,3.6,TRUE,8.4", with only "one" variable (--> check with ncols(df2)) it means that you used the wrong separator and need to specify read.csv2("mydf.csv", sep=",").
+df2 <- read.csv2("mydf.csv") #check ?read.csv2 for more information on the function and how to use it. For example, you can specify if the csv file has a header or not (=if the first row contains the variable names or not.) and how the variables are separated (sep="," for comma-separated values, but it might also be ";" or " " or anything else). If the data set is not huge, I recommend opening it first with a text editor of your choice so that you see which separator is used. Otherwise, try it with "," or ";" and check how R interprets the data. If you see something like (for example) "1.5,apple,4.5,7.7,green,3.6,TRUE,8.4", with only "one" variable (--> check with ncol(df2)) it means that you used the wrong separator and need to specify read.csv2("mydf.csv", sep=",").
 
 identical(df1, df2)
 str(df1)

@@ -1,4 +1,6 @@
 
+#Versuch, die R-Übungen von Raphael und Jonathan selbst zu machen (+dann vgl. mit Lösungen bzw. von ChatGPT evaluieren lassen):
+
 rm(list=ls(all=TRUE))
 
 # Exercise 1:
@@ -6,21 +8,22 @@ rm(list=ls(all=TRUE))
 ## Task 1
 
 #1. Assign the number 2 to an object a.
-a <- 2 #Or:
+a <- 2 #This is the most common assignment method. Alternatively:
 a = 2 #Or:
 2 -> a
 
 #2. Take the natural logarithm of a.
-log(a)
+log(a) #As you can see if you type ?log, the log function will calculate the natural logarithm (base = e = 2.71...) by default. But you can also specify another base. Try for example: log(1000, base=10)
 
 #3. Assign a new object using sin <- a.
 sin <- a
 
 #4. What will be the output of sin(sin)? Try to predict the output before executing the code!
-sin(sin)
+sin(sin) #Note that it is NOT recommended to assign a value to a variable with the same name as an existing function, even though it technically works.
 
 #Just for fun:
 sin(1)^2 + cos(1)^2 #Or: sin(1)**2 + cos(1)**2
+#This is the "Pythagorean trigonometric identity".
 
 #5. Assign a new variable b with the value TRUE.
 b <- TRUE
@@ -54,22 +57,23 @@ v <- c(2, 4, 5, 6, 4, -1) #or easier:
 -v
 
 #2. Add 1 to each element of the vector?
-v + 1 #recycling rule!
+v + 1 #recycling rule! The shorter vector (here: 1) is reused ("recycled") until it matches the length of the longer vector it is added to. This only works if the longer vector is a (whole-number) multiple of the shorter vector.
 
 #3. Swap the sign of the vector.
-v*(-1)
+v*(-1) #Or easier:
+-v
 
 #4. Get the second element of the vector.
 v[2]
 
 #5. Get all elements of the vector except the last one.
-v[-6]
+v[-6] #Works here, but it is not recommended because it won't work anymore if the vector becomes longer or shorter by adding or removing elements. Better:
 v[-length(v)] #or:
-v[1:(length(v)-1)]
+v[1:(length(v)-1)] #Read: From the vector v, take all elements starting from the first one, until one before the last element. length(v) gives the length of the vector (here: 6), so it would take the entire vector from 1 to 6. length(v)-1 gives a vector in which the last element of v is removed.
 
 #6. How many values of 4 does the vector contain?
 length(v[v==4]) #or:
-sum(v==4)
+sum(v==4) #v==4 returns a logical vector with TRUE if the element is 4 and FALSE otherwise. Since TRUE is coded 1 and FALSE is coded 0, we can simply use the sum() function to count the number of elements for which the condition (v==4) is TRUE.
 
 #7. Swap the sign of all negative values.
 abs(v) #or:
@@ -78,16 +82,19 @@ v[v < 0] <- -v[v < 0]
 ## Task 3
 
 #1. Define a vector f1 containing 5 arbitrary elements of the type character.
-f1 <- sample(LETTERS, 5) #short for: sample(x=LETTERS, size=5, replace=FALSE)
+f1 <- sample(LETTERS, size=5) #short for: sample(x=LETTERS, size=5, replace=FALSE)
+#LETTERS returns a vector with the capital letters of the alphabet. (letters returns a vector with the small latters of the alphabet.) sample(x, size) takes a sample of n=size (here: 5) values from the vector x (here: LETTERS).
+#LETTERS and size are function arguments (of the function sample()). An argument is "something you put into a function." Some arguments are mandatory like the element(s) to select the sample from in the sample() function. Other arguments are optional, like the size and the replace argument. It means that the function also returns something if you don't specify something for them, like here size=5.
+#Note that sample() has the default argument replace=FALSE. It means that it will select the specified number of elements from the vector, but without repeating them. Sometimes you will want to use replace=TRUE so that values can be drawn repeatedly (random draw with replacement.) This is needed for example for bootstrapping.
 
 #2. Define a vector f2 containing 5 arbitrary elements of the type factor.
-f2 <- factor(sample(LETTERS, 5))
+f2 <- factor(sample(LETTERS, 5)) #A factor is something like a nominal variable. It can be useful if you have a variable with "a handful" of possible values which cannot be ordered, like "favorite color" of study participants.
 
 #3. Define a vector f3 containing 5 other arbitrary elements of the type numeric.
 f3 <- c(4, 9, 8.6, 7, -6.25)
 
 #4. Create a list L containing the vectors f1, f2, f3.
-mylist <- list(f1, f2, f3)
+mylist <- list(f1, f2, f3) #A list can contain anything: vectors, data frames, matrices etc. Use [[]] to access its elements.
 
 #5. Look at the structure of the list.
 str(mylist)
@@ -99,7 +106,7 @@ mylist[[3]] +1
 #6. Create a data.frame df1 using L. Look at the structure again.
 df1 <- data.frame(mylist)
 colnames(df1) <- c("letters", "factors", "numbers")
-str(df1)
+str(df1) #The data frame is the typical structure of data sets, with one row per observation and one column per variable.
 
 #7. What are the element on the second row?
 df1[2,]
@@ -115,7 +122,7 @@ write.csv2(df1, file="mydf.csv", row.names=FALSE)
 getwd()
 
 #11. Load the data set into R as a new object df2 and compare it with the original one df1. What is the problem here?
-df2 <- read.csv2("mydf.csv")
+df2 <- read.csv2("mydf.csv") #check ?read.csv2 for more information on the function and how to use it. For example, you can specify if the csv file has a header or not (=if the first row contains the variable names or not.) and how the variables are separated (sep="," for comma-separated values, but it might also be ";" or " " or anything else). If the data set is not huge, I recommend opening it first with a text editor of your choice so that you see which separator is used. Otherwise, try it with "," or ";" and check how R interprets the data. If you see something like (for example) "1.5,apple,4.5,7.7,green,3.6,TRUE,8.4", with only "one" variable (--> check with ncol(df2)) it means that you used the wrong separator and need to specify read.csv2("mydf.csv", sep=",").
 
 identical(df1, df2)
 str(df1)
@@ -267,7 +274,7 @@ boxplot(dat$weight ~ dat$Time)
 boxplot(dat$weight ~ dat$Diet)
 #6. Do the same, as before, but now combine the three variables: Use Time on the x-axis, weight on the y-axis and use Diet as a fill argument.
 cols <- c("skyblue", "tomato", "palegreen3", "gold")  # eine Farbe je Diet
-boxplot(weight ~ Time * Diet, data = dat, col = rep(cols, times = nlevels(dat$Time)), xlab = "Time", ylab = "Weight", las = 2)
+boxplot(weight ~ Diet * Time, data = dat, col = rep(cols, times = nlevels(dat$Time)), xlab = "Time", ylab = "Weight", las = 2)
 legend("topleft", title = "Diet", fill = cols, legend = levels(dat$Diet), bty = "n")
 
 #Or with ggplot2:
@@ -281,13 +288,13 @@ library(lattice)
 
 xyplot(circumference ~ age,
        data   = Orange,
-       groups = Tree,                  
-       pch    = 16,                    
+       groups = Tree,                  # färbt nach Tree
+       pch    = 16,                    # volle Punkte
        cex    = 0.8,
-       auto.key = list(points = TRUE,  
-                       lines  = FALSE,
+       auto.key = list(points = TRUE,  # Legende automatisch
+                       lines  = FALSE, #TRUE wäre für line plots. Hier nicht sinnvoll, wil nur in Legende.
                        title  = "Tree",
-                       space  = "right"), #Or: "left", "top", "bottom". 
+                       space  = "right"), #Or: "left", "top", "bottom". Ginge auch mit Koordinaten.
        xlab = "Age",
        ylab = "Circumference")
 
@@ -394,6 +401,29 @@ hist(log(dat$hdl), breaks=15)
 dat$log_hdl <- log(dat$hdl)
 hist(dat$log_hdl, breaks=15)
 
+_lft <- factor(dat$diab_lft, levels = c(0,1,2), labels = c("None","Prediabetes","Diabetes"))
+boxplot(dat$rr_sys ~ dat$diab_lft)
+boxplot(rr_sys ~ diab_lft, data=dat)
+
+ggplot(dat, aes(diab_lft, rr_sys))+
+  geom_boxplot()
+
+#3. Plot the BMI against educ and give a short interpretation.
+boxplot(dat$bmi ~ dat$educ)
+
+ggplot(dat, aes(educ, bmi))+
+  geom_boxplot()
+dev.off()
+
+#4. Plot the histogram of the high-density lipoprotein (HDL) cholesterol levels. How does the distribution of HDL look like?
+hist(dat$hdl, breaks=50)
+ggplot(dat, aes(hdl)) + geom_histogram(bins=50)
+
+#5. Can you convert the variable HDL so that its distribution looks more normal? Create such a variable and add it to your data set.
+hist(log(dat$hdl), breaks=15)
+dat$log_hdl <- log(dat$hdl)
+hist(dat$log_hdl, breaks=15)
+
 ## Exercise 4, Task 3 (Confidence intervals):
 
 #1. Is the variable height normally distributed in males and females? Check this by analyzing graphically the two sub-samples. Use qqplots: qqnorm() and qqline().
@@ -410,22 +440,33 @@ qqline(dat[dat$sex=="male",]$height)
 mean(dat[dat$sex=="male",]$height, na.rm=T)
 mean(dat[dat$sex=="male",]$height, na.rm=T) -1.96*(sqrt(64) / sqrt(sum(!is.na(dat$height[dat$sex=="male"]))))
 mean(dat[dat$sex=="male",]$height, na.rm=T) +1.96*(sqrt(64) / sqrt(sum(!is.na(dat$height[dat$sex=="male"]))))
+#KI ist so eng, weil 5000 Leute im Datensatz sind.
 
 #3. Repeat the procedure for the female population, with unknown variance and using a confidence level of 95%.
-mean(dat[dat$sex=="female",]$height, na.rm=T)
-low <- mean(dat$height[dat$sex=="female"],na.rm=T) - qnorm(0.975)*sqrt(64/(length(dat$height[dat$sex])-sum(is.na(dat$height[dat$sex]))))
-up <- mean(dat$height[dat$sex=="female"],na.rm=T) + qnorm(0.975)*sqrt(64/(length(dat$height[dat$sex])-sum(is.na(dat$height[dat$sex]))))
-c(low,up)
-#CI is so narrow because we have 5000 people in the data set.
-#In fact, because we aassume unknown variance, the following would be more adequate (and is easier):
-t.test(dat$height[dat$sex == "female"], conf.level = 0.95)$conf.int
+# 3. Female population: unknown variance, 95% confidence interval
+
+x <- na.omit(dat$height[dat$sex == "female"])
+
+n <- length(x)
+m <- mean(x)
+s <- sd(x)
+
+low <- m - qt(0.95, df = n-1) * s / sqrt(n)
+up  <- m + qt(0.95, df = n-1) * s / sqrt(n)
+
+c(low, up)
+
+# Easier, and equivalent:
+t.test(x, conf.level = 0.95)$conf.int
+
 
 #Repeat the procedure for the female population, with unknown variance and using a confidence level of 90%
-females <- dat[dat$sex=="female",,]
+females <- dat[dat$sex=="female",]
 males <- dat[dat$sex=="male",]
 
 DescTools::MeanCI(x=females$height, conf.level=0.90, sides="two.sided", na.rm=T)
 DescTools::MeanCI(x=males$height, conf.level=0.90, sides="two.sided", na.rm=T)
+
 
 
 ## Exercise 4, Task 4 (Tests):
@@ -505,14 +546,14 @@ prop.test(table(dat$smoke_bin, dat$cancer_ever)) #Ist aus irgendeinem Grund "ver
 
 #4.10 Do the same test in the subgroup of people who are between 20 and 49 years old. What do you see now? How can you explain the results?
 
-prop.test(table(dat[dat$age<50,]$smoke_bin, dat[dat$age<50,]$cancer_ever))
+prop.test(table(dat[dat$age>=20 & dat$age<50,]$smoke_bin, dat[dat$age>=20 & dat$age<50,]$cancer_ever))
 #Note: Instead of dat[dat$age<50,]$age, one could also write dat$age[dat$age<50]. Slightly shorter and less error prone, because you don't need the comma at the end.
 #Or:
-subset(dat, age<50)
+subset(dat, age>=20 & age<50)
 #Or:
 library(data.table)
 dt <- data.table(dat)
-dt[age<50]
+dt[age>=20 & age<50]
 
 ## Exercise 4, Task 5 (Discrete and non-parametric tests):
 
@@ -585,7 +626,8 @@ fisher.test(mytab)
 
 #Self-rated health:
 mytab <- table(obese[,c("srhgnrl","ovrwght_ever")])
-prop.table(mytab, margin=1)
+# prop.table(mytab, margin=1) #Not what we want.
+prop.table(mytab, margin = 2)
 chisq.test(mytab)
 
 
@@ -633,7 +675,7 @@ summary(mod4)
 
 # 1. Analyze the relationship between lifetime diagnosis of cancer and exposure to pollutants, using the categorized age variable (Note: No information on pollutant exposure was collected from participants aged 80+, so these cannot be included in the analysis). Does the adjustment for age change the picture? Interpret the model coeﬀ icients including the intercept.
 
-dat$age_cat <- cut(dat$age, c(0, 18, 35, 50, 65, 80, 100))
+dat$age_cat <- dat$age.cat <- cut(dat$age, c(0, 18, 35, 50, 65, 80, 100))
 
 mylogreg1 <- glm(cancer_ever ~ workpollut, data=dat, family="binomial")
 summary(mylogreg1)

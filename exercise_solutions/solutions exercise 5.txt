@@ -1,0 +1,86 @@
+
+# Exercise 5:
+
+#Task 1 (linear regression)
+
+#1. How strong is the relationship between BMI and systolic blood pressure?
+cor.test(dat$rr_sys, dat$bmi)
+cor.test(dat$bmi, dat$rr_sys)
+summary(lm(rr_sys ~ bmi, data=dat))
+
+#2. create a binary age ( younger: 𝑎𝑔𝑒 ≤ 50 and older: 𝑎𝑔𝑒 > 50) and a binary smoking variable
+dat$age_dicho <- cut(dat$age, c(0,50,100), right = T) #Achtung: right=F (s. Raphael) ist FALSCH! #or:
+dat$age_dicho2 <- ifelse(dat$age <=50, "<=50", ">50")
+
+#Does the relationship between systolic blood pressure and BMI change when you adjust for age (categorized)?
+summary(lm(rr_sys ~ bmi + age_dicho, data = dat))
+#Interpret the coeﬀ icients of the resulting model.
+#...
+
+#Would you say that BMI has a clinically relevant impact on blood pressure, according to your model?
+#...
+
+#3. Try to find a better model to predict systolic blood pressure by including more covariates. Select a number of candidate covariates which in your opinion may be related to systolic blood pressure, and then choose a model selection strategy and a criterion/test for comparing models. Describe the model with the best fit according to your search, and interpret the model coefficients.
+
+sub_dat <- dat[ ,c('rr_sys', 'bmi', 'sex', 'age_dicho', 'diab_lft', 'heartdis_ever', 'alc_lft', 'smokstat')]
+complete.data <- sub_dat[complete.cases(sub_dat), ]  # complete.cases deletes all rows with at least one NA
+complete.data$bmi <- complete.data$bmi - mean(complete.data$bmi) #Mean centering. Makes the intercept interpretable.
+
+# full model
+mod1 <- lm(rr_sys ~ bmi + sex + age_dicho + diab_lft + heartdis_ever + alc_lft + smokstat, data=complete.data)
+summary(mod1)
+
+# stepwise selection
+library(MASS)
+mod2 <- stepAIC(mod1) #default for direction is "backward"
+mod3 <- stepAIC(mod1, direction="backward") #same!
+mod4 <- stepAIC(mod1, direction="forward")
+
+summary(mod2)
+summary(mod4)
+
+#Task 2 (logistic regression)
+
+# 1. Analyze the relationship between lifetime diagnosis of cancer and exposure to pollutants, using the categorized age variable (Note: No information on pollutant exposure was collected from participants aged 80+, so these cannot be included in the analysis). Does the adjustment for age change the picture? Interpret the model coeﬀ icients including the intercept.
+
+dat$age_cat <- dat$age.cat <- cut(dat$age, c(0, 18, 35, 50, 65, 80, 100))
+
+mylogreg1 <- glm(cancer_ever ~ workpollut, data=dat, family="binomial")
+summary(mylogreg1)
+
+mylogreg2 <- glm(cancer_ever ~ workpollut + age_cat, data=dat, family="binomial")
+summary(mylogreg2)
+
+# 2.  Try to find a good model of cancer diagnosis, describe and interpret it as you did for systolic blood pressure.
+
+sub.data <- dat[ ,c('cancer_ever', 'cd', 'pb', 'hg', 'drnkprd_prv12mo', 'cigsprd_prv30d', 'bmi', 'sex', 'age.cat', 'diab_lft', 'rdyfood_prvmo')]
+complete.data <- sub.data[complete.cases(sub.data), ]
+mod3 <- glm(cancer_ever ~ cd + pb + hg + drnkprd_prv12mo + cigsprd_prv30d + bmi + sex + age.cat + as.factor(diab_lft) + rdyfood_prvmo, family = binomial(logit), data = complete.data)
+mod4 <- stepAIC(mod3)
+summary(mod4)
+# explanation
+# only intercept
+mod5 <- glm(cancer_ever ~ 1, data = dat, family=binomial)
+summary(mod5)
+(tab <- table(dat$cancer_ever))
+tab["TRUE"]/(tab["TRUE"] + tab["FALSE"])
+exp(mod5$coefficients["(Intercept)"])/(1 + exp(mod5$coefficients["(Intercept)"]))
+# with a predictor
+mod6 <- glm(cancer_ever ~ workpollut, data = dat, family = binomial(logit))
+summary(mod6)
+(tab <- table(dat$workpollut, dat$cancer_ever))
+#For people not exposed to work pollution
+p.ne <- tab["FALSE","TRUE"]/(tab["FALSE","TRUE"] + tab["FALSE","FALSE"])
+exp(mod6$coefficients["(Intercept)"])/(1+exp(mod6$coefficients["(Intercept)"]))
+#For people exposed to work pollution
+p.e <- tab["TRUE","TRUE"]/(tab["TRUE","TRUE"] + tab["TRUE","FALSE"])
+exp(mod6$coefficients["(Intercept)"] + mod6$coefficients["workpollutTRUE"])/(1+exp(mod6$coefficients["(Intercept)"]+mod6$coefficients["workpollutTRUE"]))
+# log-odd baseline (no workpollution)
+log(p.ne/(1-p.ne))
+mod6$coefficients["(Intercept)"]
+# log-odds workpollution
+log(p.e/(1-p.e))
+mod6$coefficients["(Intercept)"] + mod6$coefficients["workpollutTRUE"]
+# log odds-ratio
+log((p.e/(1-p.e))/(p.ne/(1-p.ne)))
+summary(mod6)

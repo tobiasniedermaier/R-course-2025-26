@@ -120,13 +120,22 @@ mean(dat[dat$sex=="male",]$height, na.rm=T) +1.96*(sqrt(64) / sqrt(sum(!is.na(da
 #KI ist so eng, weil 5000 Leute im Datensatz sind.
 
 #3. Repeat the procedure for the female population, with unknown variance and using a confidence level of 95%.
-mean(dat[dat$sex=="female",]$height, na.rm=T)
-low <- mean(dat$height[dat$sex=="female"],na.rm=T) - qnorm(0.975)*sqrt(64/(length(dat$height[dat$sex])-sum(is.na(dat$height[dat$sex]))))
-up <- mean(dat$height[dat$sex=="female"],na.rm=T) + qnorm(0.975)*sqrt(64/(length(dat$height[dat$sex])-sum(is.na(dat$height[dat$sex]))))
-c(low,up)
-#KI ist so eng, weil 5000 Leute im Datensatz sind.
-#In fact, because we aassume unknown variance, the following would be more adequate (and is easier):
-t.test(dat$height[dat$sex == "female"], conf.level = 0.95)$conf.int
+# 3. Female population: unknown variance, 95% confidence interval
+
+x <- na.omit(dat$height[dat$sex == "female"])
+
+n <- length(x)
+m <- mean(x)
+s <- sd(x)
+
+low <- m - qt(0.95, df = n-1) * s / sqrt(n)
+up  <- m + qt(0.95, df = n-1) * s / sqrt(n)
+
+c(low, up)
+
+# Easier, and equivalent:
+t.test(x, conf.level = 0.95)$conf.int
+
 
 #Repeat the procedure for the female population, with unknown variance and using a confidence level of 90%
 females <- dat[dat$sex=="female",]
@@ -213,14 +222,14 @@ prop.test(table(dat$smoke_bin, dat$cancer_ever)) #Ist aus irgendeinem Grund "ver
 
 #4.10 Do the same test in the subgroup of people who are between 20 and 49 years old. What do you see now? How can you explain the results?
 
-prop.test(table(dat[dat$age<50,]$smoke_bin, dat[dat$age<50,]$cancer_ever))
+prop.test(table(dat[dat$age>=20 & dat$age<50,]$smoke_bin, dat[dat$age>=20 & dat$age<50,]$cancer_ever))
 #Note: Instead of dat[dat$age<50,]$age, one could also write dat$age[dat$age<50]. Slightly shorter and less error prone, because you don't need the comma at the end.
 #Or:
-subset(dat, age<50)
+subset(dat, age>=20 & age<50)
 #Or:
 library(data.table)
 dt <- data.table(dat)
-dt[age<50]
+dt[age>=20 & age<50]
 
 ## Exercise 4, Task 5 (Discrete and non-parametric tests):
 
@@ -293,5 +302,6 @@ fisher.test(mytab)
 
 #Self-rated health:
 mytab <- table(obese[,c("srhgnrl","ovrwght_ever")])
-prop.table(mytab, margin=1)
+# prop.table(mytab, margin=1) #Not what we want.
+prop.table(mytab, margin = 2)
 chisq.test(mytab)

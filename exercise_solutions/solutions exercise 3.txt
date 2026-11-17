@@ -8,12 +8,9 @@ dat <- Orange #already included in R
 
 # Define colors for each tree group
 tree_colors <- as.numeric(Orange$Tree)
-palette_colors <- c("#9A241B",  # Dark red
-                    "#F4C91E",  # Yellow
-                    "#8BB3CB",  # Light blue
-                    "#1C078E",  # Dark blue
-                    "#747474")  # Medium gray
-palette_colors
+palette_colors <- rainbow(length(unique(Orange$Tree)))
+palette_colors #Or:
+Orange$Tree |> unique() |> length() |> rainbow()
 
 #2. Plot the two variables age and circumference against each other using a scatter plot
 #3. Add color as an additional aesthetic mapping for the variable Tree.
@@ -100,42 +97,28 @@ boxplot(dat$weight ~ dat$Time)
 #5. Plot the weight as boxplots for the different types of Diet.
 boxplot(dat$weight ~ dat$Diet)
 
-######################
 #6. Do the same, as before, but now combine the three variables: Use Time on the x-axis, weight on the y-axis and use Diet as a fill argument.
-
-# Colorblind-friendly colors (Okabe-Ito palette):
-cols <- c("#9A241B",  # Dark red
-          "#F4C91E",  # Yellow
-          "#8BB3CB",  # Light blue
-          "#1C078E")  # Dark blue
-# one color per diet
-
-boxplot(weight ~ Diet * Time, data = dat, 
-	col = cols, 
-	xlab = "Time", ylab = "Weight", las = 2)
+cols <- c("skyblue", "tomato", "palegreen3", "gold")  # eine Farbe je Diet
+boxplot(weight ~ Diet * Time, data = dat, col = rep(cols, times = nlevels(dat$Time)), xlab = "Time", ylab = "Weight", las = 2)
 legend("topleft", title = "Diet", fill = cols, legend = levels(dat$Diet), bty = "n")
 
-
-#Or nicer:
-cols <- c("#9A241B",  # Dark red
-          "#F4C91E",  # Yellow
-          "#8BB3CB",  # Light blue
-          "#1C078E")  # Dark blue
-
-boxplot(weight ~ Diet + Time, data = dat,
-        col = cols,
-        xaxt = "n",
-        xlab = "Time",
-        ylab = "Weight")
-
-axis(1, at = seq(2.5, by = 4, length.out = nlevels(dat$Time)),
-     labels = levels(dat$Time))
-
-legend("topleft", title = "Diet",
-       legend = levels(dat$Diet),
-       fill = cols, bty = "n")
-########################
-
 #Or with ggplot2:
-library(ggplot2)
-ggplot(dat, aes(Time, weight, fill = Diet)) + geom_boxplot() + scale_fill_manual(values = cols) + theme_bw()
+ggplot(dat, aes(Time, weight, fill = Diet)) + geom_boxplot()
+
+#Add color as an additional aesthetic mapping for the variable Tree:
+ggplot(Orange, aes(age, circumference, color = Tree)) + geom_point()
+
+#Or with lattice:
+library(lattice)
+
+xyplot(circumference ~ age,
+       data   = Orange,
+       groups = Tree,                  # colors according to tree
+       pch    = 16,                    # "full" dots
+       cex    = 0.8,
+       auto.key = list(points = TRUE,  # automatically create legend
+                       lines  = FALSE, #TRUE would create a line plot. Not useful here.
+                       title  = "Tree",
+                       space  = "right"), #Or: "left", "top", "bottom". Ginge auch mit Koordinaten.
+       xlab = "Age",
+       ylab = "Circumference")
