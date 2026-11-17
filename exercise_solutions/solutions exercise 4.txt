@@ -288,8 +288,9 @@ dat$bmi_cat3 <- cut(dat$bmi, breaks=c(0, 18.5, 25, 30, 100), right=FALSE)
 table(dat$bmi_cat, dat$bmi_cat3) #identical
 
 #How many overweight people were actually ever diagnosed with being overweight?
-prop.table(table(dat[dat$bmi_cat2=="Overweight",]$ovrwght_ever)) #Or:
-prop.table(table(dat$ovrwght_ever, dat$bmi_cat), margin = 2)
+table(dat$ovrwght_ever[dat$bmi_cat2 == "Overweight"])
+# prop.table(table(dat[dat$bmi_cat2=="Overweight",]$ovrwght_ever)) #Or:
+# prop.table(table(dat$ovrwght_ever, dat$bmi_cat), margin = 2)
 
 #5.9 Is there a difference in diabetes prevalence between obese people diagnosed with overweight and those who were never diagnosed? What about self-rated health? How do you explain the results?
 
