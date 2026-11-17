@@ -333,9 +333,11 @@ dat$alc_lft <- as.factor(dat$alc_lft)
 dat$smokstat <- as.factor(dat$smokstat)
 dat$milk_month <- as.factor(dat$milk_month)
 
-summary(dat[,vars])
+library(Hmisc)
 
 vars <- Cs(hivpos, srhgnrl, srphbad_prv30d, srmhbad_prv30d, adlimp_prv30d, educ, martlst, male, ethnic, increl, asthma_ever, asthma_now, ovrwght_ever, arthrit_ever, stroke_ever, livdis_ever, cbronch_now, livdis_now, cancer_ever, rel_heartdis, rel_asthma, rel_diab, heartdis_ever, lungpath_ever, diab_lft, jobstat_lwk, wrkt_irreg, workpollut, sleep_probl, cannab_ever, harddrg_ever, smokstat, age.cat, smoke_bin, bmi_cat, age_bin)
+
+summary(dat[,vars])
 
 dat[,vars] <- lapply(dat[,vars], as.factor)
 
@@ -455,7 +457,7 @@ up  <- m + qt(0.95, df = n-1) * s / sqrt(n)
 c(low, up)
 
 # Easier, and equivalent:
-t.test(x, conf.level = 0.95)$conf.int
+t.test(x, conf.level = 0.90)$conf.int
 
 
 #Repeat the procedure for the female population, with unknown variance and using a confidence level of 90%
