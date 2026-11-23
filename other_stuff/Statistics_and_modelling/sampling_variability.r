@@ -3,8 +3,6 @@
 # Sampling variability #
 ########################
 
-#Die Kursleiterin/-Organisatorin hat mir noch folgenden "Auftrag" gegeben: 
-
 #"Please do discuss sampling variability in class. this is one of the most important things students need to understand: Random sample do vary and this leads to uncertainty in the estimates which can be quantified by SE."
 
 set.seed(123)
