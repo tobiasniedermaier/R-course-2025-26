@@ -51,6 +51,10 @@ f(2)(3) #5 ("Currying")
 l <- list(x = 1:4, y = 4:1)
 Reduce(rbind, l) #Reduce is a higher-order function / functional. rbind is the function that is used as input for Reduce().
 
+product <- function(x, y, z) {
+  x * y * z
+}
+ 
 aggreg <- function(x, y, z, fun) {
   fun(x,y,z)
 }
